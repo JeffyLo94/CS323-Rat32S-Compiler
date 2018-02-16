@@ -1,0 +1,112 @@
+/***********************************************************
+ * General Structure of Lexical Analyzer and Use
+ * ---------------------------------------------------------
+ * Author: Jeffrey Lo
+ * 
+ ***********************************************************/
+
+Main Program
+	
+	Create output filestream ("Analysis.txt")
+
+	INPUT file name for Input text file from console OR "exit"
+	
+	IF filename not equal to "exit"
+		Open file to input Filestream
+		IF file fails to open
+			OUTPUT failed to open file error
+			EXIT program
+		ELSE
+			// NOT SURE this is necessary
+			OUTPUT all of "source code" from the input file to output file for documentation
+		END IF
+
+		OUTPUT to console two "columns" headings (setw)  
+		OUTPUT to Analysis.txt the same headings
+		
+		create an instance of LexicalAnalyzer()
+		
+		clear inputfilestream (file.clear())
+		
+		//Start Lexical Analysis process
+		WHILE not end of input file
+			CALL lexer(inputfile)
+
+			If not end of file
+				OUTPUT to lexeme and token to console (print function)
+				OUTPUT to Analysis.txt
+		END WHILE
+
+		close input filestream
+	END IF
+
+	close output filestream
+
+	//system pause for console
+	return
+
+End Main
+
+
+
+
+//NOTE: There may be functions that you may want to add.
+Class LexicalAnalyzer()
+	Public:
+		LexicalAnalyzer()								//REMEMBER to Populate HashTable(s)
+		~LexicalAnalyzer()
+
+		lexer(ifstream& infile)							//Where the Magic Happens
+		/*	FUNCTION lexer
+		 *	1. gets char from file
+		 *		- until sees seperator, operator, whitespace, eof
+		 *		- if is is sep, op, or whitespace -> flag to break loop & set character into string & unget 
+		 *		- otherwise create identifier string
+		 *	2. Check if string is an Seperator, Operator, integer, Real, keyword, or identifier & SET appropriate values for Token and Lexeme
+		 *		- This can be broken up into a "classification" function that returns a number
+		 *			- DFSM functions can be called in here
+		 *		- number can be used in a switch statement to set appropriate lexeme and token private members
+		 *		- need to add special case for seperator "%%" -> needs to file.peek()
+		 *		- WARNING - may be more special cases
+		 */
+
+		void	print()									// Prints to current lexeme and token value to console
+
+		//ACCESSORS
+		string	getToken();								//Returns token (in case user wants to print to file)
+		string	getLexeme();							//Returns lexeme (in case user wants to print to file)
+
+		//MUTATORS
+		void	setToken(string nT)						//Not sure if these are necessary
+		void	setLexeme(string nL)					//Not sure if these are necessary
+
+	Private:
+	//Helper Methods
+		bool	integerDFSM(const string)				//REMEMBER to include comment diagram of DFSM when create
+		bool	realDFSM(const string)					//REMEMBER to include comment diagram of DFSM when create
+		bool	idDFSM(const string)					//REMEMBER to include comment diagram of DFSM when create
+
+
+		bool	isSeperator(character)
+		bool	isOperator(character)
+		bool	isKeyword(string)
+
+	//Private Members:
+		char	currentIn;							//character
+		string	lexeme;
+		string	token;
+
+
+		/********************************************************************************
+		 * Hash Tables for Keywords, Seperators, Operators
+		 *		WHY? Most effecient interms of BigO at searching, inserting, etc.
+		 *			(O(1) avg)
+		 *		Option 1: 1 Hash Table for all 
+		 *			- first string is the lexeme ("int", "+", "-", "{", "boolean", ETC.)
+		 *			- second string is the token ("Keyword", "Seperator", "Operator")
+		 *		Option 2: 3 seperate Hash Tables
+		 *			- IMO not really necessary
+		 *			- Could aid in readability?
+		 ********************************************************************************/
+		unordered_map <string, string> specialLexs
+End Class
