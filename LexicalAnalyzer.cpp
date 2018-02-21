@@ -16,3 +16,53 @@
 ***********************************************************/
 
 //Read OverallStructure.txt for Guide
+
+#include "LexicalAnalyzer.h"
+
+LexicalAnalyzer::LexicalAnalyzer() {
+
+}
+
+LexicalAnalyzer::~LexicalAnalyzer() {
+
+}
+
+int LexicalAnalyzer::lexer(string line) {
+	return 19939;
+}
+
+void LexicalAnalyzer::print() {
+
+}
+
+string LexicalAnalyzer::getLexeme() {
+
+}
+
+string LexicalAnalyzer::getLexeme() {
+
+}
+
+bool LexicalAnalyzer::isKeyword(string keyword) {
+
+}
+
+bool LexicalAnalyzer::isOperator(char ch) {
+
+}
+
+bool LexicalAnalyzer::isSeperator(char ch) {
+
+}
+
+bool LexicalAnalyzer::idDFSM(const string str) {
+
+}
+
+bool LexicalAnalyzer::integerDFSM(const string str) {
+
+}
+
+bool LexicalAnalyzer::realDFSM(const string str) {
+
+}
