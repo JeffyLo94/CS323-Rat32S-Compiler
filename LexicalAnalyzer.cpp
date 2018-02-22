@@ -20,7 +20,47 @@
 #include "LexicalAnalyzer.h"
 
 LexicalAnalyzer::LexicalAnalyzer() {
-
+	//Initializing Hashtable of special case lexemes
+	//Operators:
+	specialLexs.insert({
+		//Operators:
+		{ "=", "operator" },
+		{ "+", "operator" },
+		{ "-", "operator" },
+		{ "*", "operator" },
+		{ "/", "operator" },
+		{ "==", "operator" },
+		{ "^=", "operator" },
+		{ "<", "operator" },
+		{ ">", "operator" },
+		{ "=<", "operator" },
+		{ "=>", "operator" },
+		//Seperators
+		{ "%%", "seperator" },
+		{ ":", "seperator" },
+		{ "[", "seperator" },
+		{ "]", "seperator" },
+		{ ",", "seperator" },
+		{ "{", "seperator" },
+		{ "}", "seperator" },
+		{ "(", "seperator" },
+		{ ")", "seperator" },
+		{ ";", "seperator" },
+		//Keywords
+		{ "function", "keyword" },
+		{ "int", "keyword" },
+		{ "boolean", "keyword" },
+		{ "real", "keyword" },
+		{ "if", "keyword" },
+		{ "else", "keyword" },
+		{ "endif", "keyword" },
+		{ "return", "keyword" },
+		{ "put", "keyword" },
+		{ "get", "keyword" },
+		{ "while", "keyword" },
+		{ "true", "keyword" },
+		{ "false", "keyword" },
+	});
 }
 
 LexicalAnalyzer::~LexicalAnalyzer() {
