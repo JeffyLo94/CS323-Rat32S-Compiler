@@ -25,6 +25,7 @@
 #include <fstream>
 #include <iomanip>
 #include <string>
+#include <unordered_map>
 
 using namespace std;
 
@@ -73,4 +74,6 @@ private:
 	char	currentChar;							    //character
 	string	lexeme;
 	string	token;
+
+	unordered_map <string, string> specialLexs;		//Hash Table of Keywords, Seperators, Operators
 };
