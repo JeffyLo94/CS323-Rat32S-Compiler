@@ -21,31 +21,10 @@
 #include <string>
 #include "LexicalAnalyzer.h"
 
-#define operatorLength 8
-#define separatorLength 10
-
 using namespace std;
 
-string keywords[13] = { "function","int","boolean","real","if","else","endif","return","put","get","while","true","false" };
-char operators[] = "+-*/=^><";
-char separators[] = "%:[],{}();";
-
-enum States {
-	id,
-	op,
-	keyword,
-	separator,
-	integer,
-	real
-};
-
-int lexer(char, char[], int);
-
 int main() {
-	char ch, buffer[20];
-	int state = 0;
-	string expression;
-
+	string line;
 	LexicalAnalyzer lextest;
 
 	string fileName;
@@ -56,21 +35,27 @@ int main() {
 
 	cout << "Please enter source file name to test: ";
 	cin >> fileName;
-
+	cout << endl;
+	
+	//Open the file which the user entered in
 	sourceFile.open(fileName);
 
+	//Make sure the files were opened properly
 	if (!sourceFile) {
 		cerr << "Unable to open source file " << fileName << ".\nPlease make sure you enter the correct name.";
+		system("pasuse");
 		return 0;
 	}
 
-	while (!sourceFile.eof()) {
-		getline(sourceFile, expression);
-		cout << lextest.lexer(expression);
+	//This will read the source file one line at a time and passes it to the lexer function
+	while (getline(sourceFile, line)) {
+		lextest.lexer(line);
 	}
 
+	//Closing file streams
 	sourceFile.close();
 	lexicalReport.close();
 
-return 0;
+	system("pause");
+	return 0;
 }

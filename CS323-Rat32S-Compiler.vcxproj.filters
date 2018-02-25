@@ -18,6 +18,9 @@
     <Text Include="OverallStructure.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="Source.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
