@@ -112,6 +112,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="OverallStructure.txt" />
+    <Text Include="Source.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LexicalAnalyzer.cpp" />
