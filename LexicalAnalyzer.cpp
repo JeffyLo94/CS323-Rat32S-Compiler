@@ -50,7 +50,7 @@ int transistionTable[14][7] =
 	{ 10,	11,		10,		11,			11,		12,		13	},
 	{ 11,	11,		11,		11,			11,		12,		13	},
 	{ 12,	12,		12,		12,			12,		12,		12	},
-	{ 13,	11,		11,		11,			11,		11,		13	}										
+	{ 13,	11,		11,		11,			11,		12,		13	}										
 };
 
 LexicalAnalyzer::LexicalAnalyzer() {
@@ -132,23 +132,21 @@ int LexicalAnalyzer::lexer(string line) {
 
 		//Still working on these down here. Will update with more info
 		//Currently it is creating the token one character at a time
-		if (curState != reject && curState != spaceReject && curState != punctReject) {
+		if (curState != reject && curState != spaceReject && curState != punctReject && i != lineLength) {
 			token += currentChar;
 			i++;
 		}
 		//This program can find most tokens with a space after it. Will need fine tuning and testing to complete
-		else if (curState == spaceReject && curState != punctReject) {
-			if (prevState == 8) {
-				unordered_map <string, string>::iterator itr = specialLexs.find(token);
+		else if (curState == spaceReject /*&& curState != punctReject*/) {
+			unordered_map <string, string>::iterator itr = specialLexs.find(token);
 
-				if (itr != specialLexs.end()) {
-					cout << itr->first << "\t\t" << itr->second << endl;
-					tokenFound = true;
-				}
+			if (itr != specialLexs.end()) {
+				cout << itr->first << "\t\t" << itr->second << endl;
+				tokenFound = true;
 			}
-
-			if (tokenFound == false) {
+			else if (tokenFound == false) {
 				cout << token << "\t\t" << getLexemeName(prevState) << endl;
+				tokenFound = true;
 			}
 
 			token = "";
@@ -161,41 +159,56 @@ int LexicalAnalyzer::lexer(string line) {
 			{
 				cout << token << "\t\t" << getLexemeName(curState) << endl;
 				token = currentChar;
-			}
-			else if (curState == punctReject) {
-				token += currentChar;
+				tokenFound = true;
 				i++;
+			}
+			else {
+				if (curState == punctReject && prevState == punctReject)
+				{
+					token += currentChar;
+					unordered_map <string, string>::iterator itr = specialLexs.find(token);
 
-				//int k = i;
-				//currentChar = line[++k];
-				//curCol = colNum(currentChar);
-				//prevState = curState;
-				//curState = transistionTable[curState][curCol];
+					if (itr != specialLexs.end()) {
+						cout << itr->first << "\t\t" << itr->second << endl;
+						token = "";
+						i++;
+						curState = 1;
+						tokenFound = true;
+					}
+					else {
+						cout << token << "\t\t" << getLexemeName(curState) << endl;
+						token = "";
+						curState = 1;
+						tokenFound = true;
+						i++;
+					}
+				}
+				else {
+					token += currentChar;
+					i++;
 
-				//if (curState == punctReject) {
-				//	token += currentChar;
-				//	cout << token << "\t\t" << getLexemeName(curState) << endl;
-				//	token = "";
-				//	i++;
-				//}
-				//else {
-				//	token += currentChar;
-				//	cout << token << "\t\t" << getLexemeName(prevState) << endl;
-				//	token = "";
-				//}
+					unordered_map <string, string>::iterator itr = specialLexs.find(token);
 
-				//if (curState == spaceReject) {
-				//	i++;
-				//}
-
-				//if (token.length() > 0) {
-				//	cout << token << "\t\t" << getLexemeName(prevState) << endl;
-				//	token = "";
-				//}
+					if (itr != specialLexs.end()) {
+						cout << itr->first << "\t\t" << itr->second << endl;
+						token = "";
+						i++;
+						curState = 1;
+						tokenFound = true;
+					}
+				}
 			}
 		}
+		else if (prevState != spaceReject && prevState != curState && tokenFound == false) {
+			
+		}
+		if (i == lineLength && tokenFound == false) {
+			cout << token << "\t\t" << getLexemeName(curState) << endl;
+			token = "";
+			curState = 1;
+			tokenFound = true;
+		}
 	}
-
 	return 0;
 }
 
@@ -228,7 +241,7 @@ string LexicalAnalyzer::getLexemeName(int state) {
 		return "IDENTIFIER";
 	}
 	else if (state == 8) {
-		return "KEYWORD";
+		return "IDENTIFIER";
 	}
 	else if (state == 9) {
 		return "REAL";
