@@ -1,0 +1,18 @@
+! Test Case #2 - < 20 Lines !
+! The code below converts Farenheight into Celsius!
+
+function convert$ [fahr:int]
+{
+	return 5 * (fahr -32) / 9;
+}
+
+%%
+	int low, high, step$; ! declarations !
+	get (low, high, step$);
+	while (low &lt; high )
+	{	put (low);
+		put (convert$ (low));
+		low = low + step$;
+	}
+
+!commented out keywords: put get while if endif else return!
