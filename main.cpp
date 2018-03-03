@@ -34,8 +34,9 @@ int main() {
 	ofstream lexicalReport;
 
 	cout << "Please enter source file name to test: ";
-	cin >> fileName;
-	cout << endl;
+	//cin >> fileName;
+	fileName = "source.txt";
+	cout << " " << fileName << endl << endl;
 	
 	//Open the file which the user entered in
 	sourceFile.open(fileName);

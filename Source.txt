@@ -1,1 +1,1 @@
-int i=3
+while  (fahr < upper)   a = 23.00

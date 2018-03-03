@@ -49,11 +49,14 @@ public:
 													*		- WARNING - may be more special cases
 													*/
 
-	void print();								    // Prints to current lexeme and token value to console
+	void writeAndPrint();							// Prints to current lexeme and token value to console
+	bool checkHash();
+	void unknownWriteAndPrint();
+	bool checkUnknown();
 
 	//												//ACCESSORS
-	//string	getToken();								//Returns token (in case user wants to print to file)
-	//string	getLexeme();							//Returns lexeme (in case user wants to print to file)
+	//string	getToken();							//Returns token (in case user wants to print to file)
+	//string	getLexeme();						//Returns lexeme (in case user wants to print to file)
 
 private:
 	//Helper Methods
@@ -65,10 +68,10 @@ private:
 	//bool	isKeyword(string);
 
 	//Private Members:
-	char	currentChar;							//character
-	string	lexeme;
-	string	lexemeName;
-	string	token;
+	int curState, prevState, curCol, lineLength;			
+	string	lexeme, lexemeName, token;
+	char	currentChar;
+	bool tokenFound;
 
 	unordered_map <string, string> specialLexs;		//Hash Table of Keywords, Seperators, Operators
 };
