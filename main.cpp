@@ -30,12 +30,18 @@ int main() {
 	string fileName;
 	ifstream sourceFile;
 
-	string reportName;
-	ofstream lexicalReport;
+	ofstream outfile("lexicalReport.txt", std::ofstream::out | std::ofstream::trunc);
+
+	outfile << "--------------------------------------------------------" << endl;
+	outfile << "Lexical Anlyzer Project" << endl;
+	outfile << "*California State University, Fullerton(CSUF)" << endl;
+	outfile << "*	CPSC 323 - Spring 2017" << endl;
+	outfile << "* Prof Song Choi" << endl;
+	outfile << "*	Assignment #1 - Lexical Analyzer" << endl;
+	outfile << "--------------------------------------------------------" << endl << endl;
 
 	cout << "Please enter source file name to test: ";
-	//cin >> fileName;
-	fileName = "source.txt";
+	cin >> fileName;
 	cout << " " << fileName << endl << endl;
 	
 	//Open the file which the user entered in
@@ -50,12 +56,12 @@ int main() {
 
 	//This will read the source file one line at a time and passes it to the lexer function
 	while (getline(sourceFile, line)) {
-		lextest.lexer(line);
+		lextest.lexer(line, outfile);
 	}
 
 	//Closing file streams
 	sourceFile.close();
-	lexicalReport.close();
+	outfile.close();
 
 	system("pause");
 	return 0;
