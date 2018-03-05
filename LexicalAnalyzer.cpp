@@ -48,7 +48,7 @@ int transistionTable[14][7] =
 	{ 8,	8,		7,		11,			6,		12,		13	},	//Accept Identifier/KEYWORD - Check for KEYWORD if last state
 	{ 9,	11,		10,		11,			11,		12,		13	},	//Accept Real
 	{ 10,	11,		10,		11,			11,		12,		13	},
-	{ 11,	11,		11,		11,			11,		12,		13	},
+	{ 11,	11,		11,		11,			11,		12,		11	},
 	{ 12,	12,		12,		12,			12,		12,		12	},
 	{ 13,	3,		2,		11,			11,		12,		13	}										
 };
@@ -57,6 +57,8 @@ LexicalAnalyzer::LexicalAnalyzer() {
 	//Initializing Hashtable of special case lexemes
 	//OPERATORs:
 	specialLexs.insert({
+		//COMMENT
+		{ "!",	"OPERATOR" },
 		//OPERATORs:
 		{ "=",	"OPERATOR" },
 		{ "+",	"OPERATOR" },
@@ -96,6 +98,8 @@ LexicalAnalyzer::LexicalAnalyzer() {
 		{ "false", "KEYWORD" },
 		//Unknown punct
 		{ "!", "UNKNOWN" },
+		{ "?", "UNKNOWN" },
+		{ "'", "UNKNOWN" },
 		{ "@", "UNKNOWN" },
 		{ "#", "UNKNOWN" },
 		{ "%", "UNKNOWN" },
@@ -107,6 +111,7 @@ LexicalAnalyzer::LexicalAnalyzer() {
 		{ "_", "UNKNOWN" },
 		{ "`", "UNKNOWN" },
 		{ "~", "UNKNOWN" },
+		{ "$", "UNKNOWN" },
 	});
 }
 
@@ -121,7 +126,7 @@ LexicalAnalyzer::~LexicalAnalyzer() {
 //		a ketword, integer, real, etc...
 //@param line - (string) line taken from the sourcefile
 ////////////////////////////////////////////////////////////////////////
-int LexicalAnalyzer::lexer(string line) {
+int LexicalAnalyzer::lexer(string line, ofstream &writeToFile) {
 	//Starting state
 	curState = 1;
 	//This will be used to go back a state if it is a space, tab, OPERATOR, etc...
@@ -143,8 +148,8 @@ int LexicalAnalyzer::lexer(string line) {
 
 		if (curState != reject && curState != spaceReject && curState != punctReject && i != lineLength) {
 			if (prevState == punctReject) {
-				if (!checkHash()) {
-					writeAndPrint();
+				if (!checkHash(writeToFile)) {
+					writeAndPrint(writeToFile);
 				}
 				curState = transistionTable[curState][curCol];
 			}
@@ -155,8 +160,8 @@ int LexicalAnalyzer::lexer(string line) {
 			if (prevState == 1 || prevState == spaceReject) {
 				curState = 1;
 			}
-			else if (!checkHash()) {
-				writeAndPrint();
+			else if (!checkHash(writeToFile)) {
+				writeAndPrint(writeToFile);
 				curState = 1;
 			}
 			i++;
@@ -164,21 +169,32 @@ int LexicalAnalyzer::lexer(string line) {
 		else if (curState == punctReject) {
 			if (prevState != punctReject && prevState != 1)
 			{
-				if (!checkHash()) {
-					writeAndPrint();
+				if (!checkHash(writeToFile)) {
+					writeAndPrint(writeToFile);
 				}
 				token += currentChar;
 				tokenFound = false;
 				i++;
 			}
+			
 			else {
 				if (curState == punctReject && prevState == punctReject)
 				{
-					checkUnknown();
-					token += currentChar;
-					if (!checkHash()) {
-						unknownWriteAndPrint();
+					if (currentChar == '%' && token == "%") {
+						token += currentChar;
+						checkHash(writeToFile);
 					}
+					else if (!checkHash(writeToFile)) {
+						checkUnknown(writeToFile);
+						token += currentChar;
+						unknownWriteAndPrint(writeToFile);
+					}
+					else {
+						checkUnknown(writeToFile);
+						token += currentChar;
+						tokenFound = false;
+					}
+					curState = punctReject;
 					i++;
 				}
 				else {
@@ -187,13 +203,19 @@ int LexicalAnalyzer::lexer(string line) {
 				}
 			}
 		}
+		else if (curState == reject) {
+			token += currentChar;
+			i++;
+		}
+
 		if (i == lineLength && tokenFound == false) {
-			if (!checkHash()) {
+			if (!checkHash(writeToFile)) {
 				if (curState == punctReject) {
-					unknownWriteAndPrint();
+					unknownWriteAndPrint(writeToFile);
 				}
 				else if (curState != spaceReject) {
 					cout << token << "\t\t" << getLexemeName(curState) << endl;
+					writeToFile << token << "\t\t" << getLexemeName(curState) << endl;
 					token = "";
 					curState = 1;
 					tokenFound = true;
@@ -226,7 +248,7 @@ int LexicalAnalyzer::colNum(char ch) {
 }
 
 string LexicalAnalyzer::getLexemeName(int state) {
-	if (state == 2 || state == 4) {
+	if (state == 2 || state == 4 || state == 5) {
 		return "INTEGER";
 	}
 	else if (state == 6 || state == 3) {
@@ -245,11 +267,12 @@ string LexicalAnalyzer::getLexemeName(int state) {
 		return "UNKNOWN";
 }
 
-bool LexicalAnalyzer::checkHash() {
+bool LexicalAnalyzer::checkHash(ofstream &writeToFile) {
 	unordered_map <string, string>::iterator itr = specialLexs.find(token);
 
 	if (itr != specialLexs.end()) {
 		cout << itr->first << "\t\t" << itr->second << endl;
+		writeToFile << itr->first << "\t\t" << itr->second << endl;
 		tokenFound = true;
 		token = "";
 		curState = 1;
@@ -258,12 +281,13 @@ bool LexicalAnalyzer::checkHash() {
 	return false;
 }
 
-bool LexicalAnalyzer::checkUnknown() {
+bool LexicalAnalyzer::checkUnknown(ofstream &writeToFile) {
 	unordered_map <string, string>::iterator itr = specialLexs.find(token);
 
 	if (itr != specialLexs.end()) {
 		if (itr->second == "UNKNOWN") {
 			cout << itr->first << "\t\t" << itr->second << endl;
+			writeToFile << itr->first << "\t\t" << itr->second << endl;
 			tokenFound = true;
 			token = "";
 			curState = 1;
@@ -273,14 +297,16 @@ bool LexicalAnalyzer::checkUnknown() {
 	return false;
 }
 
-void LexicalAnalyzer::writeAndPrint() {
+void LexicalAnalyzer::writeAndPrint(ofstream &writeToFile) {
 	cout << token << "\t\t" << getLexemeName(prevState) << endl;
+	writeToFile << token << "\t\t" << getLexemeName(prevState) << endl;
 	token = "";
 	tokenFound = true;
 }
 
-void LexicalAnalyzer::unknownWriteAndPrint() {
+void LexicalAnalyzer::unknownWriteAndPrint(ofstream &writeToFile) {
 	cout << token << "\t\t" << getLexemeName(reject) << endl;
+	writeToFile << token << "\t\t" << getLexemeName(prevState) << endl;
 	token = "";
 	curState = 1;
 	tokenFound = true;

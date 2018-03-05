@@ -34,8 +34,8 @@ public:
 
 	LexicalAnalyzer();						        //REMEMBER to Populate HashTable(s)
 	~LexicalAnalyzer();
+	int lexer(string line, ofstream & writeToFile);
 
-	int lexer(string);								//Where the Magic Happens
 													/*	FUNCTION lexer
 													*	1. gets char from file
 													*		- until sees seperator, operator, whitespace, eof
@@ -49,16 +49,17 @@ public:
 													*		- WARNING - may be more special cases
 													*/
 
-	void writeAndPrint();							// Prints to current lexeme and token value to console
-	bool checkHash();
-	void unknownWriteAndPrint();
-	bool checkUnknown();
+	void writeAndPrint(ofstream & writeToFile);							// Prints to current lexeme and token value to console
+	bool checkHash(ofstream & writeToFile);
+	void unknownWriteAndPrint(ofstream & writeToFile);
+	bool checkUnknown(ofstream & writeToFile);
 
 	//												//ACCESSORS
 	//string	getToken();							//Returns token (in case user wants to print to file)
 	//string	getLexeme();						//Returns lexeme (in case user wants to print to file)
 
 private:
+	
 	//Helper Methods
 	int colNum(char);
 	string getLexemeName(int);
