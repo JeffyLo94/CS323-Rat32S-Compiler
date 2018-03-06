@@ -202,9 +202,9 @@ void LexAn::lexer(ifstream& inFile) {
 		ch = inFile.get();
 
 		//Check if character is possible seperator, possible operator, wSpace, or EOF
-		if (isPossibleSepChar(ch)) {		//Possibly Found a Seperator
+		if (isPossibleSepChar(ch)) {					//Possibly Found a Seperator
 			if (!lexStr.empty()) {
-				inFile.unget();				//We have a string but hit a sperator
+				inFile.unget();							//We have a string but hit a sperator
 				handler = STRING;
 				found = true;
 			}
@@ -213,9 +213,9 @@ void LexAn::lexer(ifstream& inFile) {
 				found = true;
 			}
 		}
-		else if(isPossibleOpChar(ch)) {		//Possibly found an Operator
+		else if(isPossibleOpChar(ch)) {					//Possibly found an Operator
 			if (!lexStr.empty()) {
-				inFile.unget();				//We have a string but hit operator
+				inFile.unget();							//We have a string but hit operator
 				handler = STRING;
 				found = true;
 			}
@@ -224,36 +224,53 @@ void LexAn::lexer(ifstream& inFile) {
 				found = true;
 			}
 		}
-		else if (isspace(ch) && !lexStr.empty()) { //WhiteSpace Seperation of string
+		else if (isspace(ch) && !lexStr.empty()) {		//WhiteSpace Seperation of string
 			found = true;
 			handler = STRING;
 		}
-		else if (ch == -1) { //END of FILE CASE
+		else if (ch == -1) {							 //END of FILE CASE
 			found = true;
 			handler = ENDFILE;
 		}
-		else if (!isspace(ch)) { 		//String creation - Should only add Char if not whitespace, seperator, operator, eof
+		else if (!isspace(ch)) { 						//String creation - Should only add Char if not whitespace, seperator, operator, eof
 			lexStr += ch;
+		}
+		else {
+			cout << "ERROR - Line 239 - character unknown"; // Error - Commment out later
+			handler = ERR;
 		}//ENDIF
 	
 	}//ENDWHILE
 
 	switch (handler) {
 		case STRING:
-			//CALLs DFSM
-			//	IF returned TRUE:
-			//		- DFSM should have already set token and lexeme
-			//		- Check the lexeme if it is a keyword
-			//			- IF it is a keyword, change token
-			//	IF returned FALSE:
-			//		- then DFSM believes it is an UNKNOWN Lexeme 
-			//		- Set string as lexeme and token as UNKNOWN
-		;
+			if (DFSM(lexStr)) {			//CALLs DFSM, IF returned TRUE:
+				
+				it = keywords.find(lexeme);
+				if (it != seperators.end()) { //- if is a keyword, change token
+					setToken(it->second);
+					//setLexeme(it->first);
+				}
+			}
+			else {						//	IF returned FALSE:	
+				setToken("UNKNOWN");		//		- then DFSM believes it is an UNKNOWN Lexeme 
+				//setLexeme(lexStr);		//		- Set string as lexeme and token as UNKNOWN
+			}
+			break;
 		case OPERATOR:
 			//HANDLES OPERATORS
-		;
+			break;
 		case SEPERATOR:
 			//Handling Seperators
+			temp.clear();
+			temp.push_back(ch);				// Adding char from While Loop to lex string
+			ch = inFile.peek();				// Checking next character
+			// %% CASE
+			if (temp[0] == '%' && ch == '%') {
+				temp.push_back( inFile.get());		//Adds %% to temp string
+			}
+			//Check Seperator against Seperator Table
+			
 				//temp.clear();
 				//temp.push_back(ch);
 				//it = seperators.find(temp);
@@ -264,10 +281,10 @@ void LexAn::lexer(ifstream& inFile) {
 
 				//	found = true;
 				//}
-			;
+			break;
 		case ENDFILE:
 			//Handling EOF - means theres nothing left to process
-			;
+			break;
 		default:
 			//Output Unknown/ERROR
 			// Error message or Unknown

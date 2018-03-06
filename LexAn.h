@@ -58,26 +58,30 @@ public:
 
 	void	print();								//Prints current lexeme and token value
 
-	void writeAndPrint(ofstream & writeToFile);							// Prints to current lexeme and token value to console
-	bool checkHash(ofstream & writeToFile);
-	void unknownWriteAndPrint(ofstream & writeToFile);
-	bool checkUnknown(ofstream & writeToFile);
 
 	//ACCESSORS
 	string	getToken();							//Returns token (in case user wants to print to file)
 	string	getLexeme();						//Returns lexeme (in case user wants to print to file)
 
+	//void writeAndPrint(ofstream & writeToFile);							// Prints to current lexeme and token value to console
+	//bool checkHash(ofstream & writeToFile);
+	//void unknownWriteAndPrint(ofstream & writeToFile);
+	//bool checkUnknown(ofstream & writeToFile);
+
 	enum LexType{
 		STRING,
 		OPERATOR,
 		SEPERATOR,
-		ENDFILE
+		ENDFILE,
+		ERR
 	};
 
 private:
 	//Helper Methods
-	int				colNum(char);
+	int			colNum(char);
 //	string			getLexemeName(int);
+
+	bool		DFSM(string potentialLex);
 
 	bool		isSeperator(string str);
 	bool		isOperator(string str);
