@@ -115,10 +115,12 @@
     <Text Include="Source.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="LexeAn.cpp" />
     <ClCompile Include="LexicalAnalyzer.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="LexAn.h" />
     <ClInclude Include="LexicalAnalyzer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

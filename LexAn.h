@@ -37,7 +37,6 @@ public:
 
 	LexAn();						        //REMEMBER to Populate HashTable(s)
 	~LexAn();
-	
 
 	/*	FUNCTION lexer
 	*	1. gets char from file
@@ -52,7 +51,8 @@ public:
 	*		- WARNING - may be more special cases
 	*/
 	void	lexer(ifstream& infile);
-
+	bool	DFSM(string str);
+	int		colNum(char ch);
 	void	setLexeme(string lex);
 	void	setToken(string token);
 
@@ -77,12 +77,12 @@ public:
 private:
 	//Helper Methods
 	int				colNum(char);
-//	string			getLexemeName(int);
+	//	string			getLexemeName(int);
 
 	bool		isSeperator(string str);
 	bool		isOperator(string str);
 	bool		isKeyword(string str);
-	
+  
 	bool		isPossibleSepChar(char sep);
 	bool		isPossibleOpChar(char op);
 
