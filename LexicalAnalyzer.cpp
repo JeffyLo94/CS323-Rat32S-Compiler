@@ -180,19 +180,18 @@ int LexicalAnalyzer::lexer(string line, ofstream &writeToFile) {
 			else {
 				if (curState == punctReject && prevState == punctReject)
 				{
+					checkUnknown(writeToFile); 
+					token += currentChar; 
+
 					if (currentChar == '%' && token == "%") {
 						token += currentChar;
 						checkHash(writeToFile);
 					}
 					else if (!checkHash(writeToFile)) {
-						checkUnknown(writeToFile);
-						token += currentChar;
 						unknownWriteAndPrint(writeToFile);
 					}
 					else {
 						checkUnknown(writeToFile);
-						token += currentChar;
-						tokenFound = false;
 					}
 					curState = punctReject;
 					i++;
@@ -248,7 +247,7 @@ int LexicalAnalyzer::colNum(char ch) {
 }
 
 string LexicalAnalyzer::getLexemeName(int state) {
-	if (state == 2 || state == 4 || state == 5) {
+	if (state == 2 ||  state == 5) {
 		return "INTEGER";
 	}
 	else if (state == 6 || state == 3) {
