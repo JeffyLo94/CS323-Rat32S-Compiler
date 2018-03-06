@@ -53,6 +53,7 @@ public:
 	bool checkHash(ofstream & writeToFile);
 	void unknownWriteAndPrint(ofstream & writeToFile);
 	bool checkUnknown(ofstream & writeToFile);
+	bool isSep(ofstream & writeToFile);
 
 	//												//ACCESSORS
 	//string	getToken();							//Returns token (in case user wants to print to file)

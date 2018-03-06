@@ -36,21 +36,21 @@ enum States {
 //This should be able to tell us if it is an Integer, Identifier/KEYWORD, or Real
 //The first row isn't used by this program and is there for clarity
 int transistionTable[14][7] =
-{ 
+{
 	{ 0,	letter,	digit,	decimal,	dollar,	space,	punct },
-	{ 1,	3,		2,		11,			11,		12,		13	},	//Starting State
-	{ 2,	11,		5,		4,			11,		12,		13	},	//Accept Integer
-	{ 3,	8,		7,		11,			6,		12,		13	},	//Accepting Identifier
-	{ 4,	11,		9,		11,			11,		12,		13	},	//Accept Integer
-	{ 5,	11,		5,		4,			11,		12,		13	},
-	{ 6,	11,		11,		11,			11,		12,		13	},	//Accept Identifier
-	{ 7,	8,		7,		11,			6,		12,		13	},
-	{ 8,	8,		7,		11,			6,		12,		13	},	//Accept Identifier/KEYWORD - Check for KEYWORD if last state
-	{ 9,	11,		10,		11,			11,		12,		13	},	//Accept Real
-	{ 10,	11,		10,		11,			11,		12,		13	},
-	{ 11,	11,		11,		11,			11,		12,		11	},
-	{ 12,	12,		12,		12,			12,		12,		12	},
-	{ 13,	3,		2,		11,			11,		12,		13	}										
+{ 1,	3,		2,		11,			11,		12,		13 },	//Starting State
+{ 2,	11,		5,		4,			11,		12,		13 },	//Accept Integer
+{ 3,	8,		7,		11,			6,		12,		13 },	//Accepting Identifier
+{ 4,	11,		9,		11,			11,		12,		13 },	//Accept Integer
+{ 5,	11,		5,		4,			11,		12,		13 },
+{ 6,	11,		11,		11,			11,		12,		13 },	//Accept Identifier
+{ 7,	8,		7,		11,			6,		12,		13 },
+{ 8,	8,		7,		11,			6,		12,		13 },	//Accept Identifier/KEYWORD - Check for KEYWORD if last state
+{ 9,	11,		10,		11,			11,		12,		13 },	//Accept Real
+{ 10,	11,		10,		11,			11,		12,		13 },
+{ 11,	11,		11,		11,			11,		12,		11 },
+{ 12,	12,		12,		12,			12,		12,		12 },
+{ 13,	3,		2,		11,			11,		12,		13 }
 };
 
 LexicalAnalyzer::LexicalAnalyzer() {
@@ -82,6 +82,7 @@ LexicalAnalyzer::LexicalAnalyzer() {
 		{ "(",	"SEPERATOR" },
 		{ ")",	"SEPERATOR" },
 		{ ";",	"SEPERATOR" },
+		{ "!",  "SEPERATOR" },
 		//KEYWORDs
 		{ "function", "KEYWORD" },
 		{ "int",	"KEYWORD" },
@@ -97,7 +98,6 @@ LexicalAnalyzer::LexicalAnalyzer() {
 		{ "true", "KEYWORD" },
 		{ "false", "KEYWORD" },
 		//Unknown punct
-		{ "!", "UNKNOWN" },
 		{ "?", "UNKNOWN" },
 		{ "'", "UNKNOWN" },
 		{ "@", "UNKNOWN" },
@@ -112,7 +112,7 @@ LexicalAnalyzer::LexicalAnalyzer() {
 		{ "`", "UNKNOWN" },
 		{ "~", "UNKNOWN" },
 		{ "$", "UNKNOWN" },
-	});
+		});
 }
 
 LexicalAnalyzer::~LexicalAnalyzer() {
@@ -176,25 +176,24 @@ int LexicalAnalyzer::lexer(string line, ofstream &writeToFile) {
 				tokenFound = false;
 				i++;
 			}
-			
+
 			else {
 				if (curState == punctReject && prevState == punctReject)
 				{
-					if (currentChar == '%' && token == "%") {
+					if (!isSep(writeToFile) && tokenFound == false) {
+						token += currentChar;
+						if (!checkHash(writeToFile)) {
+							unknownWriteAndPrint(writeToFile);
+						}
+					}
+					else if (currentChar == '%' && token == "%" && tokenFound == false) {
 						token += currentChar;
 						checkHash(writeToFile);
 					}
-					else if (!checkHash(writeToFile)) {
-						checkUnknown(writeToFile);
-						token += currentChar;
-						unknownWriteAndPrint(writeToFile);
-					}
 					else {
-						checkUnknown(writeToFile);
 						token += currentChar;
-						tokenFound = false;
+						curState = punctReject;
 					}
-					curState = punctReject;
 					i++;
 				}
 				else {
@@ -227,19 +226,19 @@ int LexicalAnalyzer::lexer(string line, ofstream &writeToFile) {
 }
 
 int LexicalAnalyzer::colNum(char ch) {
-	if(isdigit(ch)) {
+	if (isdigit(ch)) {
 		return digit;
 	}
-	else if(isalpha(ch)) {
+	else if (isalpha(ch)) {
 		return letter;
 	}
-	else if(ch == '$') {
+	else if (ch == '$') {
 		return dollar;
 	}
 	else if (ch == '.') {
 		return decimal;
 	}
-	else if(isspace(ch)) {
+	else if (isspace(ch)) {
 		return space;
 	}
 	else if (ispunct(ch)) {
@@ -248,7 +247,7 @@ int LexicalAnalyzer::colNum(char ch) {
 }
 
 string LexicalAnalyzer::getLexemeName(int state) {
-	if (state == 2 || state == 4 || state == 5) {
+	if (state == 2 || state == 5) {
 		return "INTEGER";
 	}
 	else if (state == 6 || state == 3) {
@@ -265,6 +264,22 @@ string LexicalAnalyzer::getLexemeName(int state) {
 	}
 	else
 		return "UNKNOWN";
+}
+
+bool LexicalAnalyzer::isSep(ofstream &writeToFile) {
+	unordered_map <string, string>::iterator itr = specialLexs.find(token);
+
+	if (itr != specialLexs.end()) {
+		if (itr->second == "SEPERATOR") {
+			cout << itr->first << "\t\t" << itr->second << endl;
+			writeToFile << itr->first << "\t\t" << itr->second << endl;
+			tokenFound = true;
+			token = "";
+			curState = 1;
+			return true;
+		}
+	}
+	return false;
 }
 
 bool LexicalAnalyzer::checkHash(ofstream &writeToFile) {
