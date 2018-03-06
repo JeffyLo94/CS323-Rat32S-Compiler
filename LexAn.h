@@ -51,8 +51,7 @@ public:
 	*		- WARNING - may be more special cases
 	*/
 	void	lexer(ifstream& infile);
-	bool	DFSM(string str);
-	int		colNum(char ch);
+
 	void	setLexeme(string lex);
 	void	setToken(string token);
 
@@ -63,10 +62,6 @@ public:
 	string	getToken();							//Returns token (in case user wants to print to file)
 	string	getLexeme();						//Returns lexeme (in case user wants to print to file)
 
-	//void writeAndPrint(ofstream & writeToFile);							// Prints to current lexeme and token value to console
-	//bool checkHash(ofstream & writeToFile);
-	//void unknownWriteAndPrint(ofstream & writeToFile);
-	//bool checkUnknown(ofstream & writeToFile);
 
 	enum LexType{
 		STRING,
@@ -76,16 +71,22 @@ public:
 		ERR
 	};
 
+	//Enumerate the states/columns to make it easier to read
+	enum States {
+		letter = 1,
+		digit,
+		decimal,
+		dollar,
+		space,
+		punct,
+		reject = 11,
+		spaceReject,
+		punctReject
+	};
+
 private:
 	//Helper Methods
-<<<<<<< HEAD
-	int			colNum(char);
-//	string			getLexemeName(int);
-=======
-	int				colNum(char);
-	//	string			getLexemeName(int);
->>>>>>> bef8a05803710657f3aac45c0cb1cef6fe3d164f
-
+	int			colNum(char ch);
 	bool		DFSM(string potentialLex);
 
 	bool		isSeperator(string str);
@@ -96,11 +97,11 @@ private:
 	bool		isPossibleOpChar(char op);
 
 	//Private Members:
-	int		curState, prevState, curCol, lineLength;
+	//int		curState, prevState, curCol, lineLength;
 	string	lexeme;
 	string	token;
-	char	currentChar;
-	bool	tokenFound;
+	//char	currentChar;
+	//bool	tokenFound;
 
 	//Hash Table of Keywords, Seperators, Operators
 	unordered_map <string, string> keywords;

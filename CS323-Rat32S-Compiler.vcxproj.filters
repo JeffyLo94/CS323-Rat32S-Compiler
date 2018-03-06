@@ -21,22 +21,28 @@
     <Text Include="Source.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="TestCase1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="TestCase2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="TestCase3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="lexicalReport.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LexicalAnalyzer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="LexeAn.cpp">
+    <ClCompile Include="LexAn.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LexicalAnalyzer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="LexAn.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -19,13 +19,13 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include "LexicalAnalyzer.h"
+#include "LexAn.h"
 
 using namespace std;
 
 int main() {
-	string line;
-	LexicalAnalyzer lextest;
+	string	line;
+	LexAn	magic;
 
 	string fileName;
 	ifstream sourceFile;
@@ -36,31 +36,59 @@ int main() {
 	outfile << "Lexical Anlyzer Project" << endl;
 	outfile << "*California State University, Fullerton(CSUF)" << endl;
 	outfile << "*	CPSC 323 - Spring 2017" << endl;
+	outfile << "* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia" << endl;
 	outfile << "* Prof Song Choi" << endl;
 	outfile << "*	Assignment #1 - Lexical Analyzer" << endl;
 	outfile << "--------------------------------------------------------" << endl << endl;
-
-	cout << "Please enter source file name to test: ";
-	cin >> fileName;
-	cout << " " << fileName << endl << endl;
 	
-	//Open the file which the user entered in
-	sourceFile.open(fileName);
+	do {
+		cout << "Please enter source file .txt (type EXIT to quit): ";
+		cin >> fileName;
+		cout << " " << fileName << endl << endl;
 
-	//Make sure the files were opened properly
-	if (!sourceFile) {
-		cerr << "Unable to open source file " << fileName << ".\nPlease make sure you enter the correct name.";
-		system("pasuse");
-		return 0;
-	}
+		if (fileName != "EXIT") {
+			//Open the file which the user entered in
+			sourceFile.open(fileName.c_str());
 
-	//This will read the source file one line at a time and passes it to the lexer function
-	while (getline(sourceFile, line)) {
-		lextest.lexer(line, outfile);
-	}
+			//Make sure the files were opened properly
+			if (!sourceFile.is_open()) {
+				cerr << "Unable to open source file " << fileName << ".\nPlease make sure you enter the correct name.";
+				exit(1);
+			}
+			else { // OUTPUT Source Text Code
+				cout		<< "Source File Text:" << endl << endl;
+				outfile		<< "Source File Text:" << endl << endl;
+				while (getline(sourceFile, line)) {
+					cout	<< line << endl;
+					outfile << line << endl;
+				}
+			}
+			cout << endl << endl << "OUTPUT:" << endl;
+			cout << left << setw(20) << "Token:" << setw(20) << "Lexeme:" << endl << endl;
+			outfile << endl << endl << "OUTPUT:" << endl;
+			outfile << left << setw(20) << "Token:" << setw(20) << "Lexeme:" << endl << endl;
 
-	//Closing file streams
-	sourceFile.close();
+			//Reset File to be read
+			sourceFile.clear();
+			sourceFile.seekg(0);
+
+			//Lex Analysis Begins Here:
+			while (!sourceFile.eof()) {
+				magic.lexer(sourceFile);
+
+				//Outputs Results if not at file end
+				if (magic.getLexeme() != "EOF") {
+					magic.print();
+					outfile << setw(20) << magic.getToken() << setw(20) << magic.getLexeme() << endl;
+				}
+			} //END While
+
+			sourceFile.close();				//Closing source file
+		}// END IF - command is not EXIT
+	} while( fileName != "EXIT" );
+
+
+	//Closing output filestream
 	outfile.close();
 
 	system("pause");

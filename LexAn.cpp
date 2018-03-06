@@ -153,25 +153,85 @@ bool LexAn::isPossibleOpChar(char op) {
 	return false;
 }
 
-//string LexAn::getLexemeName(int state) {
-//	if (state == 2 || state == 5) {
-//		return "INTEGER";
-//	}
-//	else if (state == 6 || state == 3) {
-//		return "IDENTIFIER";
-//	}
-//	else if (state == 8) {
-//		return "IDENTIFIER";
-//	}
-//	else if (state == 10) {
-//		return "REAL";
-//	}
-//	else if (state == 13) {
-//		return "OPERATOR";
-//	}
-//	else
-//		return "UNKNOWN";
-//}
+//DFSM for Integers, Reals, Identifiers
+// Returns True if Accepted, False if not
+bool LexAn::DFSM(string str) {
+	bool acceptance = false;
+	int transistionTable[14][7] =
+	{
+		{ 0,	letter,	digit,	decimal,	dollar,	space,	punct },
+		{ 1,	3,		2,		11,			11,		12,		13 },	//Starting State
+		{ 2,	11,		5,		4,			11,		12,		13 },	//Accept Integer
+		{ 3,	8,		7,		11,			6,		12,		13 },	//Accepting Identifier
+		{ 4,	11,		9,		11,			11,		12,		13 },
+		{ 5,	11,		5,		4,			11,		12,		13 },	//Accept Integer
+		{ 6,	11,		11,		11,			11,		12,		13 },	//Accept Identifier
+		{ 7,	8,		7,		11,			6,		12,		13 },
+		{ 8,	8,		7,		11,			6,		12,		13 },	//Accept Identifier/KEYWORD - Check for KEYWORD if last state
+		{ 9,	11,		10,		11,			11,		12,		13 },	//Accept Real
+		{ 10,	11,		10,		11,			11,		12,		13 },	//Accept Real
+		{ 11,	11,		11,		11,			11,		12,		11 },
+		{ 12,	12,		12,		12,			12,		12,		12 },
+		{ 13,	3,		2,		11,			11,		12,		13 }
+	};
+
+	int startingState = 1;
+	int strLength = str.length();
+	int curState = 1;
+	int curCol = 1;
+	char currentChar = ' ';
+
+	for (int i = 0; i < strLength; i++) {
+		currentChar = str[i];
+		curCol = colNum(currentChar);
+		curState = transistionTable[curState][curCol];
+	}
+
+	if (curState != reject) { //ACCEPTED
+		if (curState == 2 || curState == 5) {
+			setToken("INTEGER");
+			setLexeme(str);
+		}
+		else if (curState == 9 || curState == 10) {
+			setToken("REAL");
+			setLexeme(str);
+		}
+		else if (curState == 3 || curState == 6 || curState == 8) {
+			setToken("IDENTIFIER");
+			setLexeme(str);
+		}
+		return acceptance = true;
+	}
+	else {
+		setToken("ERROR-DFSM");
+		setLexeme(str);
+	}
+
+	
+
+	return acceptance;
+}
+
+int LexAn::colNum(char ch) {
+	if (isdigit(ch)) {
+		return digit;
+	}
+	else if (isalpha(ch)) {
+		return letter;
+	}
+	else if (ch == '$') {
+		return dollar;
+	}
+	else if (ch == '.') {
+		return decimal;
+	}
+	else if (isspace(ch)) {
+		return space;
+	}
+	else if (ispunct(ch)) {
+		return punct;
+	}
+}
 
 /****************************************************************************************************
  *	FUNCTION lexer
@@ -196,7 +256,7 @@ void LexAn::lexer(ifstream& inFile) {
 	bool found = false;
 	char ch = ' ';
 	char peekCh = ' ';
-	LexType  handler;			
+	LexType  handler = ERR;			
 
 	while (!found) { //Loops if nothing found or string (id, key, int, real) is still being created
 		ch = inFile.get();
@@ -229,25 +289,42 @@ void LexAn::lexer(ifstream& inFile) {
 			handler = STRING;
 		}
 		else if (ch == -1) {							 //END of FILE CASE
+			//cerr << "EOF reached" << endl;
+			//if (!lexStr.empty()) {
+			//	cerr << "attempt to put back EOF char" << endl;
+			//	inFile.putback(ch);
+			//	handler = STRING;
+			//}
+			//else {
+			//	cerr << "lexstr is empty" << endl;
+			//	handler = ENDFILE;
+			//}
 			found = true;
-			handler = ENDFILE;
 		}
-		else if (!isspace(ch)) { 						//String creation - Should only add Char if not whitespace, seperator, operator, eof
+		else if (!isspace(ch) && ch != -1) { 						//String creation - Should only add Char if not whitespace, seperator, operator, eof
 			lexStr += ch;
 		}
 		else {
-			cout << "ERROR - Line 239 - character unknown"; // Error - Commment out later
-			handler = ERR;
+			//Must be white space
+			found = false;
+			//cout << "ERROR - Line 239 - character unknown"; // Error - Commment out later
+			//handler = ERR;
 		}//ENDIF
 	
 	}//ENDWHILE
 
+	//CASE - EOF WhiteSpace
+	if (lexStr.empty() && ch == -1) {
+		handler = ENDFILE;
+	}
+
 	switch (handler) {
 		case STRING:
+			//cerr << "entering DFSM" << endl;
 			if (DFSM(lexStr)) {			//CALLs DFSM, IF returned TRUE:
-				
+				it = keywords.begin();
 				it = keywords.find(lexeme);
-				if (it != seperators.end()) { //- if is a keyword, change token
+				if (it != keywords.end()) { //- if is a keyword, change token
 					setToken(it->second);
 					//setLexeme(it->first);
 				}
@@ -259,6 +336,30 @@ void LexAn::lexer(ifstream& inFile) {
 			break;
 		case OPERATOR:
 			//HANDLES OPERATORS
+			temp.clear();
+			temp.push_back(ch);
+			ch = inFile.peek();
+			if (temp[0] == '=' && ch == '=' ||				// == CASE
+				temp[0] == '=' && ch == '>' ||				// => CASE
+				temp[0] == '=' && ch == '<' ||				// =< CASE
+				temp[0] == '^' && ch == '='	) {				// ^= CASE
+				temp.push_back( inFile.get() );				// Adds second char to string
+			}
+			lexStr = temp;
+			//Check Against Operators list
+			it = operators.begin();
+			it = operators.find(lexStr);
+			if (it != operators.end()) {
+				//operator found
+				setToken( it->second );
+				setLexeme(lexStr);
+			}
+			else {
+				//UNKNOWN Symbol
+				setToken("UNKNOWN");
+				setLexeme(lexStr);
+			}
+
 			break;
 		case SEPERATOR:
 			//Handling Seperators
@@ -269,32 +370,36 @@ void LexAn::lexer(ifstream& inFile) {
 			if (temp[0] == '%' && ch == '%') {
 				temp.push_back( inFile.get());		//Adds %% to temp string
 			}
-			//Check Seperator against Seperator Table
-			
-				//temp.clear();
-				//temp.push_back(ch);
-				//it = seperators.find(temp);
-				//if (temp == "%") {
-				//	ch.
-				//}
-				//if (it != seperators.end()) {
 
-				//	found = true;
-				//}
+			lexStr = temp;
+			//Check Seperator against Seperator Table
+			it = seperators.begin();
+			it = seperators.find(lexStr);
+			if (it != seperators.end()) {
+				//found seperator
+				setToken(it->second);
+				setLexeme(lexStr);
+			}
+			else {						//UNKNOWN SYMBOL
+				setToken("UNKNOWN");
+				setLexeme(lexStr);
+			}
 			break;
 		case ENDFILE:
 			//Handling EOF - means theres nothing left to process
+			setLexeme("EOF");
+			setToken("EOF");
 			break;
 		default:
 			//Output Unknown/ERROR
 			// Error message or Unknown
-			;
-	}
-
-
-
+			setToken("UNKNOWN");
+			setLexeme(lexStr);
+			break;
+	}// END Switch
 }
 
+//Settors
 void LexAn::setToken(string str) {
 	token = str;
 }
@@ -312,3 +417,6 @@ string LexAn::getLexeme() {
 	return lexeme;
 }
 
+void LexAn::print() {
+	cout << left << setw(20) << getToken() << setw(20) << getLexeme() << endl;
+ }

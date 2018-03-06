@@ -312,6 +312,8 @@ bool LexAn::DFSM(string str) {
 		return true;
 	}
 
+	//Call function to check Integers, IDs, and Reals
+
 	return false;
 }
 
