@@ -273,8 +273,6 @@ void LexAn::lexer(ifstream& inFile) {
 		;
 	}
 
-
-
 }
 
 bool LexAn::DFSM(string str) {

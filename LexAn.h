@@ -52,7 +52,6 @@ public:
 	*/
 	void	lexer(ifstream& infile);
 	bool	DFSM(string str);
-	int		colNum(char ch);
 	void	setLexeme(string lex);
 	void	setToken(string token);
 
