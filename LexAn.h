@@ -38,7 +38,6 @@ public:
 	LexAn();						        //REMEMBER to Populate HashTable(s)
 	~LexAn();
 
-
 	/*	FUNCTION lexer
 	*	1. gets char from file
 	*		- until sees seperator, operator, whitespace, eof
@@ -68,7 +67,7 @@ public:
 	string	getToken();							//Returns token (in case user wants to print to file)
 	string	getLexeme();						//Returns lexeme (in case user wants to print to file)
 
-	enum LexType {
+	enum LexType{
 		STRING,
 		OPERATOR,
 		SEPERATOR,
@@ -83,7 +82,7 @@ private:
 	bool		isSeperator(string str);
 	bool		isOperator(string str);
 	bool		isKeyword(string str);
-
+  
 	bool		isPossibleSepChar(char sep);
 	bool		isPossibleOpChar(char op);
 

@@ -1,0 +1,9 @@
+! Test Case #1 - <10 lines!
+
+! Characters not in RAT18S !
+@ # & \ |  ' '' ''' " "" ? _ __ .
+
+!these can't be by itself! ^ % $
+
+! Sample Code !
+while (fahr < upper) a = 23.00 
