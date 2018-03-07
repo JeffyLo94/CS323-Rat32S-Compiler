@@ -187,7 +187,7 @@ bool LexAn::DFSM(string str) {
 		curState = transistionTable[curState][curCol];
 	}
 
-	if (curState != reject) { //ACCEPTED
+	if (curState < reject) { //ACCEPTED
 		if (curState == 2 || curState == 5) {
 			setToken("INTEGER");
 			setLexeme(str);

@@ -2,170 +2,457 @@
 Lexical Anlyzer Project
 *California State University, Fullerton(CSUF)
 *	CPSC 323 - Spring 2017
+* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia
 * Prof Song Choi
 *	Assignment #1 - Lexical Analyzer
 --------------------------------------------------------
 
-!		OPERATOR
-Test		IDENTIFIER
-Case		IDENTIFIER
-3		INTEGER
--		OPERATOR
->		OPERATOR
-20		INTEGER
-Lines		IDENTIFIER
--		OPERATOR
-Comprehensive		IDENTIFIER
-Test		IDENTIFIER
-!		OPERATOR
-!		OPERATOR
-KEYWORDS		IDENTIFIER
-!		OPERATOR
-function		KEYWORD
-int		KEYWORD
-boolean		KEYWORD
-real		KEYWORD
-if		KEYWORD
-endif		KEYWORD
-if		KEYWORD
-else		KEYWORD
-endif		KEYWORD
-return		KEYWORD
-put		KEYWORD
-get		KEYWORD
-while		KEYWORD
-true		KEYWORD
-false		KEYWORD
-!		OPERATOR
-SEPERATORS		IDENTIFIER
-and		IDENTIFIER
-Operators		IDENTIFIER
--		OPERATOR
-includes		IDENTIFIER
-spoofs		IDENTIFIER
-!		OPERATOR
-%		UNKNOWN
-%		UNKNOWN
-%		UNKNOWN
-%		UNKNOWN
-%%		SEPERATOR
-		OPERATOR
-[		SEPERATOR
-]		SEPERATOR
-[]		OPERATOR
-,		SEPERATOR
-:		SEPERATOR
-{		SEPERATOR
-}		SEPERATOR
-{/		OPERATOR
-*		OPERATOR
--		OPERATOR
-+		OPERATOR
-}		SEPERATOR
-;		SEPERATOR
-=		OPERATOR
-==		OPERATOR
-^		UNKNOWN
-^		UNKNOWN
-^		UNKNOWN
-^		UNKNOWN
-=		OPERATOR
-+		OPERATOR
--		OPERATOR
-*		OPERATOR
-/		OPERATOR
-<		OPERATOR
->		OPERATOR
-<=		OPERATOR
-<<		OPERATOR
->=		OPERATOR
->=		OPERATOR
-<=		OPERATOR
-		OPERATOR
-=		OPERATOR
-=<		OPERATOR
-=>		OPERATOR
-!		OPERATOR
-Random		IDENTIFIER
-characters		IDENTIFIER
-!		OPERATOR
-aasu		IDENTIFIER
-=		OPERATOR
-9		INTEGER
-[		SEPERATOR
-0		INTEGER
-=<		OPERATOR
-[		SEPERATOR
-		OPERATOR
--		OPERATOR
-0165		INTEGER
-j$io%		UNKNOWN
-6jio		UNKNOWN
-jkl		IDENTIFIER
-gnm		IDENTIFIER
-,		SEPERATOR
-sd		IDENTIFIER
-[]		OPERATOR
-		OPERATOR
-pij		IDENTIFIER
-==		OPERATOR
-		OPERATOR
-5		INTEGER
-<=		OPERATOR
-		OPERATOR
-6lj>=ity		UNKNOWN
-^		UNKNOWN
-=		OPERATOR
-		OPERATOR
-alsij		IDENTIFIER
-%		UNKNOWN
-%%		SEPERATOR
-		OPERATOR
-50u9gmnkol''zpgx15213d$		UNKNOWN
-!		OPERATOR
-identifier		IDENTIFIER
-test$		IDENTIFIER
-!		OPERATOR
-tHiS		IDENTIFIER
-w0rk$		IDENTIFIER
-Ar7$		IDENTIFIER
-w05612312314s		IDENTIFIER
-t5sx$		IDENTIFIER
-asdf		IDENTIFIER
-i		IDENTIFIER
-f		IDENTIFIER
-f		IDENTIFIER
-e		IDENTIFIER
-a		IDENTIFIER
-t$		IDENTIFIER
-e$		IDENTIFIER
-$not		UNKNOWN
-7not$		UNKNOWN
-t		IDENTIFIER
-o		IDENTIFIER
-p0		UNKNOWN
-ASDF1234		UNKNOWN
-endi		IDENTIFIER
-fend		IDENTIFIER
-felse		IDENTIFIER
-intelligent		IDENTIFIER
-realnumber		IDENTIFIER
-real$		IDENTIFIER
-boolean$		IDENTIFIER
-int$		IDENTIFIER
-booleanvariable		IDENTIFIER
-INT		IDENTIFIER
-BOOLEAN		IDENTIFIER
-REAL		IDENTIFIER
-what$about$th1s		UNKNOWN
-kind$of		UNKNOWN
-7hing		UNKNOWN
-IF		IDENTIFIER
-ENDIF		IDENTIFIER
-ELSE		IDENTIFIER
-PUT		IDENTIFIER
-RETURN		IDENTIFIER
-GET		IDENTIFIER
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123a123a123aaaaaaaaaaaaaaAthisIsTechnicallyAnIdentifier		IDENTIFIER
-bbbbbbbbb11111111111111222222kkkkkkkkkkkkklllllllllllsoIsThis$		IDENTIFIER
-SuperLongOne1111111111111111111111111else1111111111111if1111endif111111111111111real122boolean22222222222222222222222222222222222222222222222222Andrew33333333333333333333Arman3333333333333Jeff33333333333333333333333333399999999999999999999999999999999999aaaaaaaaaaaaaaaaddddddddddddffffffffffffff$		IDENTIFIER
+Source File Text:
+
+! Test Case #1 - <10 lines!
+
+! Characters not in RAT18S !
+@ # & \ |  ' '' ''' " "" ? _ __ .
+
+!these can't be by itself! ^ % $
+
+! Sample Code !
+while (fahr < upper) a = 23.00
+
+
+OUTPUT:
+Token:              Lexeme:             
+
+SEPERATOR           !                   
+IDENTIFIER          Test                
+IDENTIFIER          Case                
+INTEGER             #1                  
+OPERATOR            -                   
+OPERATOR            <                   
+INTEGER             10                  
+IDENTIFIER          lines               
+SEPERATOR           !                   
+SEPERATOR           !                   
+IDENTIFIER          Characters          
+IDENTIFIER          not                 
+IDENTIFIER          in                  
+IDENTIFIER          RAT18S              
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+SEPERATOR           !                   
+UNKNOWN             .                   
+SEPERATOR           !                   
+IDENTIFIER          these               
+IDENTIFIER          can't               
+IDENTIFIER          be                  
+IDENTIFIER          by                  
+IDENTIFIER          itself              
+SEPERATOR           !                   
+UNKNOWN             ^                   
+UNKNOWN             %                   
+UNKNOWN             $                   
+SEPERATOR           !                   
+IDENTIFIER          Sample              
+IDENTIFIER          Code                
+SEPERATOR           !                   
+KEYWORD             while               
+SEPERATOR           (                   
+IDENTIFIER          fahr                
+OPERATOR            <                   
+IDENTIFIER          upper               
+SEPERATOR           )                   
+IDENTIFIER          a                   
+OPERATOR            =                   
+REAL                23.00               
+
+Source File Text:
+
+! Test Case #2 - < 20 Lines !
+! The code below converts Farenheight into Celsius!
+
+function convert$ [fahr:int]
+{
+	return 5 * (fahr -32) / 9;
+}
+
+%%
+	int low, high, step$; ! declarations !
+	get (low, high, step$);
+	while (low &lt; high )
+	{	put (low);
+		put (convert$ (low));
+		low = low + step$;
+	}
+
+!commented out keywords: put get while if endif else return!
+
+
+OUTPUT:
+Token:              Lexeme:             
+
+SEPERATOR           !                   
+IDENTIFIER          Test                
+IDENTIFIER          Case                
+INTEGER             #2                  
+OPERATOR            -                   
+OPERATOR            <                   
+INTEGER             20                  
+IDENTIFIER          Lines               
+SEPERATOR           !                   
+SEPERATOR           !                   
+IDENTIFIER          The                 
+IDENTIFIER          code                
+IDENTIFIER          below               
+IDENTIFIER          converts            
+IDENTIFIER          Farenheight         
+IDENTIFIER          into                
+IDENTIFIER          Celsius             
+SEPERATOR           !                   
+KEYWORD             function            
+IDENTIFIER          convert$            
+SEPERATOR           [                   
+IDENTIFIER          fahr                
+SEPERATOR           :                   
+KEYWORD             int                 
+SEPERATOR           ]                   
+SEPERATOR           {                   
+KEYWORD             return              
+INTEGER             5                   
+OPERATOR            *                   
+SEPERATOR           (                   
+IDENTIFIER          fahr                
+OPERATOR            -                   
+INTEGER             32                  
+SEPERATOR           )                   
+OPERATOR            /                   
+INTEGER             9                   
+SEPERATOR           ;                   
+SEPERATOR           }                   
+SEPERATOR           %%                  
+KEYWORD             int                 
+IDENTIFIER          low                 
+SEPERATOR           ,                   
+IDENTIFIER          high                
+SEPERATOR           ,                   
+IDENTIFIER          step$               
+SEPERATOR           ;                   
+SEPERATOR           !                   
+IDENTIFIER          declarations        
+SEPERATOR           !                   
+KEYWORD             get                 
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           ,                   
+IDENTIFIER          high                
+SEPERATOR           ,                   
+IDENTIFIER          step$               
+SEPERATOR           )                   
+SEPERATOR           ;                   
+KEYWORD             while               
+SEPERATOR           (                   
+IDENTIFIER          low                 
+IDENTIFIER          &lt                 
+SEPERATOR           ;                   
+IDENTIFIER          high                
+SEPERATOR           )                   
+SEPERATOR           {                   
+KEYWORD             put                 
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           )                   
+SEPERATOR           ;                   
+KEYWORD             put                 
+SEPERATOR           (                   
+IDENTIFIER          convert$            
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           )                   
+SEPERATOR           )                   
+SEPERATOR           ;                   
+IDENTIFIER          low                 
+OPERATOR            =                   
+IDENTIFIER          low                 
+OPERATOR            +                   
+IDENTIFIER          step$               
+SEPERATOR           ;                   
+SEPERATOR           }                   
+SEPERATOR           !                   
+IDENTIFIER          commented           
+IDENTIFIER          out                 
+IDENTIFIER          keywords            
+SEPERATOR           :                   
+KEYWORD             put                 
+KEYWORD             get                 
+KEYWORD             while               
+KEYWORD             if                  
+KEYWORD             endif               
+KEYWORD             else                
+KEYWORD             return              
+SEPERATOR           !                   
+
+Source File Text:
+
+! Test Case 3 - > 20 Lines - Comprehensive Test !
+
+!KEYWORDS!
+function
+int
+boolean
+real
+if endif
+if else endif
+return
+put get while
+true
+false
+
+! SEPERATORS and Operators - includes spoofs !
+%
+% %
+%% 
+[
+]
+[]
+,
+:
+{
+}
+{/*-+}
+;
+=
+==
+^
+^^
+^=
++
+-
+*
+/
+<
+>
+<=
+<<
+>=
+>=
+<= =
+=<
+=>
+
+! Random characters!
+aasu=9 [ 0=<[ -0165 j$io% 6jio jkl gnm,sd
+[]pij==5<=6lj>=ity ^=alsij %%50u9gmnkol''zpgx15213d$
+
+! identifier test$ !
+tHiS
+w0rk$
+Ar7$
+w05612312314s
+t5sx$
+asdf
+i  f
+f e a t$
+e$
+$not
+7not$
+t o p0
+ASDF1234
+endi
+fend
+felse
+intelligent
+realnumber
+real$
+boolean$
+int$
+booleanvariable
+INT
+BOOLEAN
+REAL
+what$about$th1s kind$of 7hing
+IF
+ENDIF
+ELSE
+PUT
+RETURN
+GET
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123a123a123aaaaaaaaaaaaaaAthisIsTechnicallyAnIdentifier
+bbbbbbbbb11111111111111222222kkkkkkkkkkkkklllllllllllsoIsThis$
+
+
+OUTPUT:
+Token:              Lexeme:             
+
+SEPERATOR           !                   
+IDENTIFIER          Test                
+IDENTIFIER          Case                
+INTEGER             3                   
+OPERATOR            -                   
+OPERATOR            >                   
+INTEGER             20                  
+IDENTIFIER          Lines               
+OPERATOR            -                   
+IDENTIFIER          Comprehensive       
+IDENTIFIER          Test                
+SEPERATOR           !                   
+SEPERATOR           !                   
+IDENTIFIER          KEYWORDS            
+SEPERATOR           !                   
+KEYWORD             function            
+KEYWORD             int                 
+KEYWORD             boolean             
+KEYWORD             real                
+KEYWORD             if                  
+KEYWORD             endif               
+KEYWORD             if                  
+KEYWORD             else                
+KEYWORD             endif               
+KEYWORD             return              
+KEYWORD             put                 
+KEYWORD             get                 
+KEYWORD             while               
+KEYWORD             true                
+KEYWORD             false               
+SEPERATOR           !                   
+IDENTIFIER          SEPERATORS          
+IDENTIFIER          and                 
+IDENTIFIER          Operators           
+OPERATOR            -                   
+IDENTIFIER          includes            
+IDENTIFIER          spoofs              
+SEPERATOR           !                   
+UNKNOWN             %                   
+UNKNOWN             %                   
+UNKNOWN             %                   
+SEPERATOR           %%                  
+SEPERATOR           [                   
+SEPERATOR           ]                   
+SEPERATOR           [                   
+SEPERATOR           ]                   
+SEPERATOR           ,                   
+SEPERATOR           :                   
+SEPERATOR           {                   
+SEPERATOR           }                   
+SEPERATOR           {                   
+OPERATOR            /                   
+OPERATOR            *                   
+OPERATOR            -                   
+OPERATOR            +                   
+SEPERATOR           }                   
+SEPERATOR           ;                   
+OPERATOR            =                   
+OPERATOR            ==                  
+UNKNOWN             ^                   
+UNKNOWN             ^                   
+UNKNOWN             ^                   
+OPERATOR            ^=                  
+OPERATOR            +                   
+OPERATOR            -                   
+OPERATOR            *                   
+OPERATOR            /                   
+OPERATOR            <                   
+OPERATOR            >                   
+OPERATOR            <                   
+OPERATOR            =                   
+OPERATOR            <                   
+OPERATOR            <                   
+OPERATOR            >                   
+OPERATOR            =                   
+OPERATOR            >                   
+OPERATOR            =                   
+OPERATOR            <                   
+OPERATOR            =                   
+OPERATOR            =                   
+OPERATOR            =<                  
+OPERATOR            =>                  
+SEPERATOR           !                   
+IDENTIFIER          Random              
+IDENTIFIER          characters          
+SEPERATOR           !                   
+IDENTIFIER          aasu                
+OPERATOR            =                   
+INTEGER             9                   
+SEPERATOR           [                   
+INTEGER             0                   
+OPERATOR            =<                  
+SEPERATOR           [                   
+OPERATOR            -                   
+INTEGER             0165                
+UNKNOWN             j$io                
+UNKNOWN             %                   
+UNKNOWN             6jio                
+IDENTIFIER          jkl                 
+IDENTIFIER          gnm                 
+SEPERATOR           ,                   
+IDENTIFIER          sd                  
+SEPERATOR           [                   
+SEPERATOR           ]                   
+IDENTIFIER          pij                 
+OPERATOR            ==                  
+INTEGER             5                   
+OPERATOR            <                   
+OPERATOR            =                   
+UNKNOWN             6lj                 
+OPERATOR            >                   
+OPERATOR            =                   
+IDENTIFIER          ity                 
+OPERATOR            ^=                  
+IDENTIFIER          alsij               
+SEPERATOR           %%                  
+UNKNOWN             50u9gmnkol''zpgx15213d$
+SEPERATOR           !                   
+IDENTIFIER          identifier          
+IDENTIFIER          test$               
+SEPERATOR           !                   
+IDENTIFIER          tHiS                
+IDENTIFIER          w0rk$               
+IDENTIFIER          Ar7$                
+IDENTIFIER          w05612312314s       
+IDENTIFIER          t5sx$               
+IDENTIFIER          asdf                
+IDENTIFIER          i                   
+IDENTIFIER          f                   
+IDENTIFIER          f                   
+IDENTIFIER          e                   
+IDENTIFIER          a                   
+IDENTIFIER          t$                  
+IDENTIFIER          e$                  
+UNKNOWN             $not                
+UNKNOWN             7not$               
+IDENTIFIER          t                   
+IDENTIFIER          o                   
+IDENTIFIER          o                   
+IDENTIFIER          o                   
+IDENTIFIER          endi                
+IDENTIFIER          fend                
+IDENTIFIER          felse               
+IDENTIFIER          intelligent         
+IDENTIFIER          realnumber          
+IDENTIFIER          real$               
+IDENTIFIER          boolean$            
+IDENTIFIER          int$                
+IDENTIFIER          booleanvariable     
+IDENTIFIER          INT                 
+IDENTIFIER          BOOLEAN             
+IDENTIFIER          REAL                
+UNKNOWN             what$about$th1s     
+UNKNOWN             kind$of             
+UNKNOWN             7hing               
+IDENTIFIER          IF                  
+IDENTIFIER          ENDIF               
+IDENTIFIER          ELSE                
+IDENTIFIER          PUT                 
+IDENTIFIER          RETURN              
+IDENTIFIER          GET                 
+IDENTIFIER          AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123a123a123aaaaaaaaaaaaaaAthisIsTechnicallyAnIdentifier
+IDENTIFIER          bbbbbbbbb11111111111111222222kkkkkkkkkkkkklllllllllllsoIsThis$
