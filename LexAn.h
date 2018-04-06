@@ -54,13 +54,14 @@ public:
 
 	void	setLexeme(string lex);
 	void	setToken(string token);
-
+	void	resetLineCounter();
 	void	print();								//Prints current lexeme and token value
 
 
 	//ACCESSORS
 	string	getToken();							//Returns token (in case user wants to print to file)
 	string	getLexeme();						//Returns lexeme (in case user wants to print to file)
+	int		getCurrLineNum();					//Returns current line;
 
 
 	enum LexType{
@@ -96,12 +97,13 @@ private:
 	bool		isPossibleSepChar(char sep);
 	bool		isPossibleOpChar(char op);
 
+
 	//Private Members:
 	//int		curState, prevState, curCol, lineLength;
 	string	lexeme;
 	string	token;
-	//char	currentChar;
-	//bool	tokenFound;
+	
+	int		lineCounter;
 
 	//Hash Table of Keywords, Seperators, Operators
 	unordered_map <string, string> keywords;

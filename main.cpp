@@ -84,6 +84,7 @@ int main() {
 			} //END While
 
 			sourceFile.close();				//Closing source file
+			magic.resetLineCounter();
 		}// END IF - command is not EXIT
 	} while( fileName != "EXIT" );
 

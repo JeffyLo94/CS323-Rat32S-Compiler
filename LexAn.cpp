@@ -81,6 +81,8 @@ LexAn::LexAn() {
 		{ "true", "KEYWORD" },
 		{ "false", "KEYWORD" },
 	});
+
+	lineCounter = 1;
 }
 
 //Destructor
@@ -207,8 +209,6 @@ bool LexAn::DFSM(string str) {
 		setLexeme(str);
 	}
 
-	
-
 	return acceptance;
 }
 
@@ -260,6 +260,11 @@ void LexAn::lexer(ifstream& inFile) {
 
 	while (!found) { //Loops if nothing found or string (id, key, int, real) is still being created
 		ch = inFile.get();
+
+		if (ch == '\n') {
+			++lineCounter;
+			cout << "TotalLines: " << lineCounter << endl;
+		}
 
 		//Check if character is possible seperator, possible operator, wSpace, or EOF
 		if (isPossibleSepChar(ch)) {					//Possibly Found a Seperator
@@ -420,3 +425,11 @@ string LexAn::getLexeme() {
 void LexAn::print() {
 	cout << left << setw(20) << getToken() << setw(20) << getLexeme() << endl;
  }
+
+void LexAn::resetLineCounter() {
+	lineCounter = 1;
+}
+
+int LexAn::getCurrLineNum() {
+	return lineCounter;
+}

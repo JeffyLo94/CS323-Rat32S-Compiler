@@ -38,19 +38,19 @@ IDENTIFIER          not
 IDENTIFIER          in                  
 IDENTIFIER          RAT18S              
 SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
-SEPERATOR           !                   
+UNKNOWN             @                   
+UNKNOWN             #                   
+UNKNOWN             &                   
+UNKNOWN             \                   
+UNKNOWN             |                   
+UNKNOWN             '                   
+UNKNOWN             ''                  
+UNKNOWN             '''                 
+UNKNOWN             "                   
+UNKNOWN             ""                  
+UNKNOWN             ?                   
+UNKNOWN             _                   
+UNKNOWN             __                  
 UNKNOWN             .                   
 SEPERATOR           !                   
 IDENTIFIER          these               
@@ -75,7 +75,6 @@ SEPERATOR           )
 IDENTIFIER          a                   
 OPERATOR            =                   
 REAL                23.00               
-
 Source File Text:
 
 ! Test Case #2 - < 20 Lines !
@@ -200,259 +199,3 @@ KEYWORD             endif
 KEYWORD             else                
 KEYWORD             return              
 SEPERATOR           !                   
-
-Source File Text:
-
-! Test Case 3 - > 20 Lines - Comprehensive Test !
-
-!KEYWORDS!
-function
-int
-boolean
-real
-if endif
-if else endif
-return
-put get while
-true
-false
-
-! SEPERATORS and Operators - includes spoofs !
-%
-% %
-%% 
-[
-]
-[]
-,
-:
-{
-}
-{/*-+}
-;
-=
-==
-^
-^^
-^=
-+
--
-*
-/
-<
->
-<=
-<<
->=
->=
-<= =
-=<
-=>
-
-! Random characters!
-aasu=9 [ 0=<[ -0165 j$io% 6jio jkl gnm,sd
-[]pij==5<=6lj>=ity ^=alsij %%50u9gmnkol''zpgx15213d$
-
-! identifier test$ !
-tHiS
-w0rk$
-Ar7$
-w05612312314s
-t5sx$
-asdf
-i  f
-f e a t$
-e$
-$not
-7not$
-t o p0
-ASDF1234
-endi
-fend
-felse
-intelligent
-realnumber
-real$
-boolean$
-int$
-booleanvariable
-INT
-BOOLEAN
-REAL
-what$about$th1s kind$of 7hing
-IF
-ENDIF
-ELSE
-PUT
-RETURN
-GET
-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123a123a123aaaaaaaaaaaaaaAthisIsTechnicallyAnIdentifier
-bbbbbbbbb11111111111111222222kkkkkkkkkkkkklllllllllllsoIsThis$
-
-
-OUTPUT:
-Token:              Lexeme:             
-
-SEPERATOR           !                   
-IDENTIFIER          Test                
-IDENTIFIER          Case                
-INTEGER             3                   
-OPERATOR            -                   
-OPERATOR            >                   
-INTEGER             20                  
-IDENTIFIER          Lines               
-OPERATOR            -                   
-IDENTIFIER          Comprehensive       
-IDENTIFIER          Test                
-SEPERATOR           !                   
-SEPERATOR           !                   
-IDENTIFIER          KEYWORDS            
-SEPERATOR           !                   
-KEYWORD             function            
-KEYWORD             int                 
-KEYWORD             boolean             
-KEYWORD             real                
-KEYWORD             if                  
-KEYWORD             endif               
-KEYWORD             if                  
-KEYWORD             else                
-KEYWORD             endif               
-KEYWORD             return              
-KEYWORD             put                 
-KEYWORD             get                 
-KEYWORD             while               
-KEYWORD             true                
-KEYWORD             false               
-SEPERATOR           !                   
-IDENTIFIER          SEPERATORS          
-IDENTIFIER          and                 
-IDENTIFIER          Operators           
-OPERATOR            -                   
-IDENTIFIER          includes            
-IDENTIFIER          spoofs              
-SEPERATOR           !                   
-UNKNOWN             %                   
-UNKNOWN             %                   
-UNKNOWN             %                   
-SEPERATOR           %%                  
-SEPERATOR           [                   
-SEPERATOR           ]                   
-SEPERATOR           [                   
-SEPERATOR           ]                   
-SEPERATOR           ,                   
-SEPERATOR           :                   
-SEPERATOR           {                   
-SEPERATOR           }                   
-SEPERATOR           {                   
-OPERATOR            /                   
-OPERATOR            *                   
-OPERATOR            -                   
-OPERATOR            +                   
-SEPERATOR           }                   
-SEPERATOR           ;                   
-OPERATOR            =                   
-OPERATOR            ==                  
-UNKNOWN             ^                   
-UNKNOWN             ^                   
-UNKNOWN             ^                   
-OPERATOR            ^=                  
-OPERATOR            +                   
-OPERATOR            -                   
-OPERATOR            *                   
-OPERATOR            /                   
-OPERATOR            <                   
-OPERATOR            >                   
-OPERATOR            <                   
-OPERATOR            =                   
-OPERATOR            <                   
-OPERATOR            <                   
-OPERATOR            >                   
-OPERATOR            =                   
-OPERATOR            >                   
-OPERATOR            =                   
-OPERATOR            <                   
-OPERATOR            =                   
-OPERATOR            =                   
-OPERATOR            =<                  
-OPERATOR            =>                  
-SEPERATOR           !                   
-IDENTIFIER          Random              
-IDENTIFIER          characters          
-SEPERATOR           !                   
-IDENTIFIER          aasu                
-OPERATOR            =                   
-INTEGER             9                   
-SEPERATOR           [                   
-INTEGER             0                   
-OPERATOR            =<                  
-SEPERATOR           [                   
-OPERATOR            -                   
-INTEGER             0165                
-UNKNOWN             j$io                
-UNKNOWN             %                   
-UNKNOWN             6jio                
-IDENTIFIER          jkl                 
-IDENTIFIER          gnm                 
-SEPERATOR           ,                   
-IDENTIFIER          sd                  
-SEPERATOR           [                   
-SEPERATOR           ]                   
-IDENTIFIER          pij                 
-OPERATOR            ==                  
-INTEGER             5                   
-OPERATOR            <                   
-OPERATOR            =                   
-UNKNOWN             6lj                 
-OPERATOR            >                   
-OPERATOR            =                   
-IDENTIFIER          ity                 
-OPERATOR            ^=                  
-IDENTIFIER          alsij               
-SEPERATOR           %%                  
-UNKNOWN             50u9gmnkol''zpgx15213d$
-SEPERATOR           !                   
-IDENTIFIER          identifier          
-IDENTIFIER          test$               
-SEPERATOR           !                   
-IDENTIFIER          tHiS                
-IDENTIFIER          w0rk$               
-IDENTIFIER          Ar7$                
-IDENTIFIER          w05612312314s       
-IDENTIFIER          t5sx$               
-IDENTIFIER          asdf                
-IDENTIFIER          i                   
-IDENTIFIER          f                   
-IDENTIFIER          f                   
-IDENTIFIER          e                   
-IDENTIFIER          a                   
-IDENTIFIER          t$                  
-IDENTIFIER          e$                  
-UNKNOWN             $not                
-UNKNOWN             7not$               
-IDENTIFIER          t                   
-IDENTIFIER          o                   
-IDENTIFIER          o                   
-IDENTIFIER          o                   
-IDENTIFIER          endi                
-IDENTIFIER          fend                
-IDENTIFIER          felse               
-IDENTIFIER          intelligent         
-IDENTIFIER          realnumber          
-IDENTIFIER          real$               
-IDENTIFIER          boolean$            
-IDENTIFIER          int$                
-IDENTIFIER          booleanvariable     
-IDENTIFIER          INT                 
-IDENTIFIER          BOOLEAN             
-IDENTIFIER          REAL                
-UNKNOWN             what$about$th1s     
-UNKNOWN             kind$of             
-UNKNOWN             7hing               
-IDENTIFIER          IF                  
-IDENTIFIER          ENDIF               
-IDENTIFIER          ELSE                
-IDENTIFIER          PUT                 
-IDENTIFIER          RETURN              
-IDENTIFIER          GET                 
-IDENTIFIER          AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA123a123a123aaaaaaaaaaaaaaAthisIsTechnicallyAnIdentifier
-IDENTIFIER          bbbbbbbbb11111111111111222222kkkkkkkkkkkkklllllllllllsoIsThis$
