@@ -120,6 +120,7 @@
     <Text Include="TestCase3.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Project1\Project1\Productions_Andrew.cpp" />
     <ClCompile Include="LexAn.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
