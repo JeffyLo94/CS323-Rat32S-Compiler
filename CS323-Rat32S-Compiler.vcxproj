@@ -120,12 +120,14 @@
     <Text Include="TestCase3.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Project1\Project1\Production_Andrew.cpp" />
     <ClCompile Include="LexAn.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Production_Andrew.cpp" />
+    <ClCompile Include="SyntaxAn.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexAn.h" />
+    <ClInclude Include="SyntaxAn.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

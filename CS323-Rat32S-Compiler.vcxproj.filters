@@ -3,10 +3,12 @@
   <ItemGroup>
     <ClCompile Include="LexAn.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="..\Project1\Project1\Production_Andrew.cpp" />
+    <ClCompile Include="SyntaxAn.cpp" />
+    <ClCompile Include="Production_Andrew.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LexAn.h" />
+    <ClInclude Include="SyntaxAn.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="lexicalReport.txt" />
