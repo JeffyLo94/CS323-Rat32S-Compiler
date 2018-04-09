@@ -30,7 +30,7 @@ public:
 	bool Rat18S();
 	bool OptFunctionDefinitions();
 	bool FunctionDefinitions();
-	bool Functions();
+	bool Function();
 	bool OptParameterList();
 	bool ParameterList();
 	bool Parameter();
@@ -65,10 +65,12 @@ public:
 private:
 	//Helper Methods:
 	void reportErr(string msg);
+	void reportLexerResults();
 
 	//Lexical Analyzer
 	LexAn lex;
 	ifstream file;
+	ofstream outFile;
 };
 
 #endif

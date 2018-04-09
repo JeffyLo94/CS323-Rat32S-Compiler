@@ -13,6 +13,12 @@
 ***********************************************************/
 #include "SyntaxAn.h"
 
+/*
+Dev Note:
+- If a rule has | <empty>
+	- wouldn't it never thrown an error?
+*/
+
 SyntaxAn::SyntaxAn(string filename) {
 	file.open(filename);
 	if (!file.is_open()) {
@@ -30,6 +36,10 @@ void SyntaxAn::reportErr(string msg) {
 	cout << msg << endl << endl;
 }
 
+void SyntaxAn::reportLexerResults() {
+	cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme << endl;
+}
+
 //Jeffrey:
 //R1. <Rat18S>  :: = <Opt Function Definitions>   %%  <Opt Declaration List>  <Statement List>
 bool SyntaxAn::Rat18S() {
@@ -37,10 +47,19 @@ bool SyntaxAn::Rat18S() {
 	if (OptFunctionDefinitions()) {
 		lex.lexer(file);
 		if (lex.getLexeme() == "%%") {
+			reportLexerResults();
 			if (OptDeclarationList()) {
 				if (StatementList()) {
 					return true;
 				}
+				else {
+					reportErr("R1 Violated: Statement List Missing");
+					return false;
+				}
+			}
+			else {
+				reportErr("R1 Violated: Opt Delaration List Missing");
+				return false;
 			}
 		}
 		else {
@@ -56,10 +75,11 @@ bool SyntaxAn::Rat18S() {
 
 //R2. <Opt Function Definitions> :: = <Function Definitions> | <Empty>
 bool SyntaxAn::OptFunctionDefinitions() {
+	cout << "<Opt Function Definitions> -> <Function Definitions> | <Empty>" << endl;
 	if (FunctionDefinitions()) {
 		return true;
 	}
-	else if(empty()){
+	else if (empty()) {
 		return true;
 	}
 	else {
@@ -69,19 +89,110 @@ bool SyntaxAn::OptFunctionDefinitions() {
 }
 //R3. <Function Definitions>  :: = <Function> | <Function> <Function Definitions>
 bool  SyntaxAn::FunctionDefinitions() {
-
+	cout << "<Function Definitions> -> <Function> | <Function> <Function Definitions>" << endl;
+	if (Function()) {
+		if (FunctionDefinitions()) {
+			return true;
+		}
+		return true;
+	}
+	else {
+		reportErr("R3 Violated: Function undefined");
+		return false;
+	}
 }
 //R4. <Function> :: = function  <Identifier>[<Opt Parameter List>]  <Opt Declaration List>  <Body>
-bool  SyntaxAn::Functions() {
-
+bool  SyntaxAn::Function() {
+	cout << "<Function> -> function  <Identifier>[<Opt Parameter List>]  <Opt Declaration List>  <Body>" << endl;
+	lex.lexer(file);
+	if (lex.getLexeme() == "function"){
+		reportLexerResults();
+		lex.lexer(file);
+		if (lex.getToken == "IDENTIFIER") {
+			reportLexerResults();
+			lex.lexer(file);
+			if (lex.getLexeme == "[") {
+				reportLexerResults();
+				if (OptParameterList()) {
+					lex.lexer(file);
+					cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme() << endl;
+					if (lex.getLexeme == "]") {
+						if (OptDeclarationList()) {
+							if (Body()) {
+								return true;
+							}
+							else {
+								reportErr("R4 Violated: Body Missing");
+								return false;
+							}
+						}
+						else {
+							reportErr("R4 Violated: OptDeclarationList Missing");
+							return false;
+						}
+					}
+					else {
+						reportErr("R4 Violated: Expected Lexeme]");
+						return false;
+					}
+				}
+				else {
+					reportErr("R4 Violated: OptParameterList missing");
+					return false;
+				}
+			}
+			else {
+				reportErr("R4 Violated: Expected Lexeme: [");
+				return false;
+			}
+		}
+		else {
+			reportErr("R4 Violated: Expected Token: IDENTIFIER");
+			return false;
+		}
+	}
+	else {
+		reportErr("R4 Vioated: Expected Lexeme: function");
+		return false;
+	}
 }
 //R5. <Opt Parameter List> :: = <Parameter List> | <Empty>
 bool  SyntaxAn::OptParameterList() {
-
+	cout << "<Opt Paramter List> -> <Parameter List> | <Empty>" << endl;
+	if (ParameterList()) {
+		return true;
+	}
+	else if (empty()) {
+		return true;
+	}
+	else {
+		reportErr("R5 Violated: Opt Parameter List Violation");
+		return false;
+	}
 }
 //R6. <Parameter List>  :: = <Parameter> | <Parameter>, <Parameter List>
 bool  SyntaxAn::ParameterList() {
+	cout << "<Paramter List> -> <Parameter> | <Parameter>, <Parameter List>" << endl;
+	if (Parameter()) {
+		lex.lexer(file);
+		if (lex.getLexeme == ",") {
+			reportLexerResults();
+			if (ParameterList()) {
+				return true;
+			}
+			else {
+				reportErr("R6 Violated: Expecting Paramter after a comma");
+				return false;
+			}
+		}
+		else {
 
+		}
+	}
+	else {
+		reportErr("R6 Violated: ParamaterList Violation");
+		return false;
+	}
 }
 //R7. <Parameter> :: = <IDs > : <Qualifier>
 bool  SyntaxAn::Parameter() {
