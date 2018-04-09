@@ -104,6 +104,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
@@ -111,6 +112,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <Text Include="lexicalReport.txt" />
     <Text Include="OverallStructure.txt" />
     <Text Include="Source.txt" />
     <Text Include="TestCase1.txt" />
@@ -118,11 +120,12 @@
     <Text Include="TestCase3.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="LexicalAnalyzer.cpp" />
+    <ClCompile Include="..\Project1\Project1\Productions_Andrew.cpp" />
+    <ClCompile Include="LexAn.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LexicalAnalyzer.h" />
+    <ClInclude Include="LexAn.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

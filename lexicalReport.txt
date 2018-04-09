@@ -1,0 +1,201 @@
+--------------------------------------------------------
+Lexical Anlyzer Project
+*California State University, Fullerton(CSUF)
+*	CPSC 323 - Spring 2017
+* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia
+* Prof Song Choi
+*	Assignment #1 - Lexical Analyzer
+--------------------------------------------------------
+
+Source File Text:
+
+! Test Case #1 - <10 lines!
+
+! Characters not in RAT18S !
+@ # & \ |  ' '' ''' " "" ? _ __ .
+
+!these can't be by itself! ^ % $
+
+! Sample Code !
+while (fahr < upper) a = 23.00
+
+
+OUTPUT:
+Token:              Lexeme:             
+
+SEPERATOR           !                   
+IDENTIFIER          Test                
+IDENTIFIER          Case                
+INTEGER             #1                  
+OPERATOR            -                   
+OPERATOR            <                   
+INTEGER             10                  
+IDENTIFIER          lines               
+SEPERATOR           !                   
+SEPERATOR           !                   
+IDENTIFIER          Characters          
+IDENTIFIER          not                 
+IDENTIFIER          in                  
+IDENTIFIER          RAT18S              
+SEPERATOR           !                   
+UNKNOWN             @                   
+UNKNOWN             #                   
+UNKNOWN             &                   
+UNKNOWN             \                   
+UNKNOWN             |                   
+UNKNOWN             '                   
+UNKNOWN             ''                  
+UNKNOWN             '''                 
+UNKNOWN             "                   
+UNKNOWN             ""                  
+UNKNOWN             ?                   
+UNKNOWN             _                   
+UNKNOWN             __                  
+UNKNOWN             .                   
+SEPERATOR           !                   
+IDENTIFIER          these               
+IDENTIFIER          can't               
+IDENTIFIER          be                  
+IDENTIFIER          by                  
+IDENTIFIER          itself              
+SEPERATOR           !                   
+UNKNOWN             ^                   
+UNKNOWN             %                   
+UNKNOWN             $                   
+SEPERATOR           !                   
+IDENTIFIER          Sample              
+IDENTIFIER          Code                
+SEPERATOR           !                   
+KEYWORD             while               
+SEPERATOR           (                   
+IDENTIFIER          fahr                
+OPERATOR            <                   
+IDENTIFIER          upper               
+SEPERATOR           )                   
+IDENTIFIER          a                   
+OPERATOR            =                   
+REAL                23.00               
+Source File Text:
+
+! Test Case #2 - < 20 Lines !
+! The code below converts Farenheight into Celsius!
+
+function convert$ [fahr:int]
+{
+	return 5 * (fahr -32) / 9;
+}
+
+%%
+	int low, high, step$; ! declarations !
+	get (low, high, step$);
+	while (low &lt; high )
+	{	put (low);
+		put (convert$ (low));
+		low = low + step$;
+	}
+
+!commented out keywords: put get while if endif else return!
+
+
+OUTPUT:
+Token:              Lexeme:             
+
+SEPERATOR           !                   
+IDENTIFIER          Test                
+IDENTIFIER          Case                
+INTEGER             #2                  
+OPERATOR            -                   
+OPERATOR            <                   
+INTEGER             20                  
+IDENTIFIER          Lines               
+SEPERATOR           !                   
+SEPERATOR           !                   
+IDENTIFIER          The                 
+IDENTIFIER          code                
+IDENTIFIER          below               
+IDENTIFIER          converts            
+IDENTIFIER          Farenheight         
+IDENTIFIER          into                
+IDENTIFIER          Celsius             
+SEPERATOR           !                   
+KEYWORD             function            
+IDENTIFIER          convert$            
+SEPERATOR           [                   
+IDENTIFIER          fahr                
+SEPERATOR           :                   
+KEYWORD             int                 
+SEPERATOR           ]                   
+SEPERATOR           {                   
+KEYWORD             return              
+INTEGER             5                   
+OPERATOR            *                   
+SEPERATOR           (                   
+IDENTIFIER          fahr                
+OPERATOR            -                   
+INTEGER             32                  
+SEPERATOR           )                   
+OPERATOR            /                   
+INTEGER             9                   
+SEPERATOR           ;                   
+SEPERATOR           }                   
+SEPERATOR           %%                  
+KEYWORD             int                 
+IDENTIFIER          low                 
+SEPERATOR           ,                   
+IDENTIFIER          high                
+SEPERATOR           ,                   
+IDENTIFIER          step$               
+SEPERATOR           ;                   
+SEPERATOR           !                   
+IDENTIFIER          declarations        
+SEPERATOR           !                   
+KEYWORD             get                 
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           ,                   
+IDENTIFIER          high                
+SEPERATOR           ,                   
+IDENTIFIER          step$               
+SEPERATOR           )                   
+SEPERATOR           ;                   
+KEYWORD             while               
+SEPERATOR           (                   
+IDENTIFIER          low                 
+IDENTIFIER          &lt                 
+SEPERATOR           ;                   
+IDENTIFIER          high                
+SEPERATOR           )                   
+SEPERATOR           {                   
+KEYWORD             put                 
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           )                   
+SEPERATOR           ;                   
+KEYWORD             put                 
+SEPERATOR           (                   
+IDENTIFIER          convert$            
+SEPERATOR           (                   
+IDENTIFIER          low                 
+SEPERATOR           )                   
+SEPERATOR           )                   
+SEPERATOR           ;                   
+IDENTIFIER          low                 
+OPERATOR            =                   
+IDENTIFIER          low                 
+OPERATOR            +                   
+IDENTIFIER          step$               
+SEPERATOR           ;                   
+SEPERATOR           }                   
+SEPERATOR           !                   
+IDENTIFIER          commented           
+IDENTIFIER          out                 
+IDENTIFIER          keywords            
+SEPERATOR           :                   
+KEYWORD             put                 
+KEYWORD             get                 
+KEYWORD             while               
+KEYWORD             if                  
+KEYWORD             endif               
+KEYWORD             else                
+KEYWORD             return              
+SEPERATOR           !                   

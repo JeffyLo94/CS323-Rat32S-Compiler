@@ -30,17 +30,26 @@
     <Text Include="TestCase3.txt">
       <Filter>Resource Files</Filter>
     </Text>
+<<<<<<< HEAD
+=======
+    <Text Include="lexicalReport.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+>>>>>>> 606c38d19a217bbc6e01f4b4552a45aafd93727d
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="LexicalAnalyzer.cpp">
+    <ClCompile Include="LexAn.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Project1\Project1\Productions_Andrew.cpp">
+      <Filter>Header Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="LexicalAnalyzer.h">
+    <ClInclude Include="LexAn.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
