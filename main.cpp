@@ -85,7 +85,7 @@ int main() {
 			//Syntax Analysis begins here:
 			SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
 			SyntaxChecker.Rat18S();
-			SyntaxChecker.~SyntaxAn();
+			SyntaxChecker.~SyntaxAn(); //Make sure files are closed
 
 		}// END IF - command is not EXIT
 	} while( fileName != "EXIT" );

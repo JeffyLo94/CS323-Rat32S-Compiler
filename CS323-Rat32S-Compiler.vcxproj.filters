@@ -18,5 +18,8 @@
     <Text Include="TestCase1.txt" />
     <Text Include="TestCase2.txt" />
     <Text Include="TestCase3.txt" />
+    <Text Include="TestCase1-SyntaxAnalyzer.txt" />
+    <Text Include="TestCase2-SyntaxAnalyzer.txt" />
+    <Text Include="TestCase3-SyntaxAnalyzer.txt" />
   </ItemGroup>
 </Project>
