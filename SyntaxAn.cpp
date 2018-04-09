@@ -19,15 +19,24 @@ Dev Note:
 	- wouldn't it never thrown an error?
 */
 
-SyntaxAn::SyntaxAn(string filename) {
-	file.open(filename);
+SyntaxAn::SyntaxAn(string inputFile, string outputFile) {
+	//Prepping InputFile
+	file.open(inputFile);
 	if (!file.is_open()) {
-		cerr << "Unable to open source file " << filename;
+		cerr << "InputFile already in use" << outputFile;
 	}
+
+	//Prepping OutputFile
+	outFile.open(outputFile, std::ofstream::out | std::ofstream::app);
+	if (!outFile.is_open()) {
+		cerr << "OutFile already in use" << outputFile;
+	}
+
 }
 
 SyntaxAn::~SyntaxAn() {
 	file.close();
+	outFile.close();
 }
 
 void SyntaxAn::reportErr(string msg) {
@@ -115,8 +124,8 @@ bool  SyntaxAn::Function() {
 				reportLexerResults();
 				if (OptParameterList()) {
 					lex.lexer(file);
-					cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme() << endl;
 					if (lex.getLexeme == "]") {
+						reportLexerResults();
 						if (OptDeclarationList()) {
 							if (Body()) {
 								return true;
@@ -132,7 +141,7 @@ bool  SyntaxAn::Function() {
 						}
 					}
 					else {
-						reportErr("R4 Violated: Expected Lexeme]");
+						reportErr("R4 Violated: Expected Lexeme: ]");
 						return false;
 					}
 				}
@@ -174,8 +183,9 @@ bool  SyntaxAn::OptParameterList() {
 bool  SyntaxAn::ParameterList() {
 	cout << "<Paramter List> -> <Parameter> | <Parameter>, <Parameter List>" << endl;
 	if (Parameter()) {
-		lex.lexer(file);
-		if (lex.getLexeme == ",") {
+		char ch = file.peek();
+		if (ch == ',') {
+			lex.lexer(file);
 			reportLexerResults();
 			if (ParameterList()) {
 				return true;
@@ -185,9 +195,7 @@ bool  SyntaxAn::ParameterList() {
 				return false;
 			}
 		}
-		else {
-
-		}
+		return true;
 	}
 	else {
 		reportErr("R6 Violated: ParamaterList Violation");
@@ -196,7 +204,28 @@ bool  SyntaxAn::ParameterList() {
 }
 //R7. <Parameter> :: = <IDs > : <Qualifier>
 bool  SyntaxAn::Parameter() {
-
+	cout << "<Paramter> -> <IDs> : <Qualifier>" << endl;
+	if (IDs()) {
+		lex.lexer(file);
+		if (lex.getLexeme == ":") {
+			reportLexerResults();
+			if (Qualifier()) {
+				return true;
+			}
+			else {
+				reportErr("R7 Violated: Qualifier Missing");
+				return false;
+			}
+		}
+		else {
+			reportErr("R7 Violated: Expected Lexeme \':\'");
+			return false;
+		}
+	}
+	else {
+		reportErr("R7 Violated: No IDs");
+		return false;
+	}
 }
 
 //Arman

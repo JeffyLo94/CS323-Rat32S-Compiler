@@ -22,7 +22,7 @@
 class SyntaxAn {
 public:
 
-	SyntaxAn(string filename);
+	SyntaxAn(string inputFile, string outputFile);
 	~SyntaxAn();
 
 	//Grammar Methods:
