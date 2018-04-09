@@ -122,6 +122,7 @@
   <ItemGroup>
     <ClCompile Include="LexAn.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Productions_Arman.cpp" />
     <ClCompile Include="Production_Andrew.cpp" />
     <ClCompile Include="SyntaxAn.cpp" />
   </ItemGroup>
