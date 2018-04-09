@@ -1,0 +1,7 @@
+int a, b, new1$;
+
+a = 14;
+b = 16;
+
+new1$ = a + b;
+put(new1$);

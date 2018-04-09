@@ -261,5 +261,5 @@ __pycache__/
 *.pyc
 lexicalReport.txt
 lexicalReport.txt
-*.txt
 lexicalReport.txt
+.DS_Store
