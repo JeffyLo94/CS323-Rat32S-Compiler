@@ -21,6 +21,15 @@
     <Text Include="Source.txt">
       <Filter>Resource Files</Filter>
     </Text>
+    <Text Include="TestCase1.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="TestCase2.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
+    <Text Include="TestCase3.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">

@@ -113,6 +113,9 @@
   <ItemGroup>
     <Text Include="OverallStructure.txt" />
     <Text Include="Source.txt" />
+    <Text Include="TestCase1.txt" />
+    <Text Include="TestCase2.txt" />
+    <Text Include="TestCase3.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="LexicalAnalyzer.cpp" />
