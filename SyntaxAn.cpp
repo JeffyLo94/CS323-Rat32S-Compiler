@@ -219,7 +219,6 @@ bool  SyntaxAn::Parameter() {
 	}
 }
 
-
 //Arman
 //R8. <Qualifier> :: = int | boolean | real
 //R9. <Body>  :: = { < Statement List> }
@@ -231,81 +230,158 @@ bool  SyntaxAn::Parameter() {
 //R24. <Relop> :: = == | ^= | > | < | => | =<
 //R23. <Condition> :: = <Expression>  <Relop>   <Expression>
 bool SyntaxAn::Qualifier() {
-	/*lexar call*/
-	if (lexeme == "int" || lexeme == "boolean" || lexeme == "real") {
+	lex.lexer(file);
+	cout << "<Qualifier> -> int | boolean | real" << endl;
+	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean" || lex.getLexeme() == "real") {
 		return true;
 	}
 	return false;
 }
 
 bool SyntaxAn::Body() {
-	/*Lexar call*/
-	if (lexeme == "{") {
+	cout << "<Body> -> { <Statement list> }" << endl;
+	lex.lexer(file);
+	if (lex.getLexeme() == "{") {
 		if (StatementList()) {
-			if (lexeme == "}")
+			lex.lexer(file);
+			if (lex.getLexeme() == "}") {
 				return true;
+			}
+			else {
+				reportErr("R9 violated: expected lexeme: }");
+				return false;
+			}
 		}
+		else {
+			reportErr("R9 violated");
+		}
+	}
+	else {
+		reportErr("R9 violated: expected lexeme: {");
+		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::OptDeclarationList() {
+	cout << "<Opt Declaration List> -> <Declaration List> | <Empty>" << endl;
 	if (DeclarationList()) {
 		return true;
 	}
 	else if (empty()) {
 		return true;
 	}
+	else {
+		reportErr("R10 violated");
+		return false;
+	}
 	return false;
 }
 
 bool SyntaxAn::DeclarationList() {
+	cout << " <Declaration List> -> <Declaration>; | <Declaration>; <Declaration List>" << endl;
 	if (Declaration()) {
-		if (lexeme == ";") {
-			return DeclarationList();
+		lex.lexer(file);
+		if (lex.getLexeme() == ";") {
+			if (DeclarationList()) {
+				return true;
+			}
+			return true;
 		}
-		return true;
+		else {
+			reportErr("R11 violated: expected lexeme: ;");
+			return false;
+		}
+	}
+	else {
+		reportErr("R11 violated");
+		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::Declaration() {
+	cout << "<Declaration> -> <Qualifier > <IDs>" << endl;
 	if (Qualifier()) {
 		if (IDs()) {
 			return true;
 		}
+		else {
+			reportErr("R12 violated");
+			return false;
+		}
+	}
+	else {
+		reportErr("R12 violated");
+		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::IDs() {
-	if (token == "identifier") {
-		if (lexeme == ",") {
+	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
+	lex.lexer(file);
+	if (lex.getToken() == "identifier") {
+		lex.lexer(file);
+		if (lex.getLexeme == ",") {
 			return IDs();
 		}
 		return true;
+	}
+	else {
+		reportErr("R13 violated: expected token: identifier");
+		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::StatementList() {
-
+	cout << " <Statement List> -> <Statement> | <Statement> <Statement List>" << endl;
+	if (statement()) {
+		if (StatementList()) {
+			return true;
+		}
+		return false;
+	}
+	else {
+		reportErr("R14 violated");
+		return false;
+	}
 	return false;
 }
 
 bool SyntaxAn::Relop() {
-	if (lexeme == "==" || lexeme == "^=" || lexeme == ">" || lexeme == "<" || lexeme == "=>" || lexeme == "=<") {
+	cout << "<Relop> -> == | ^= | > | < | => | =<" << endl;
+	lex.lexer(file);
+	if (lex.getLexeme() == "==" || lex.getLexeme() == "^=" || lex.getLexeme() == ">" || lex.getLexeme() == "<" || lex.getLexeme() == "=>" || lex.getLexeme() == "=<") {
 		return true;
+	}
+	else {
+		reportErr("R24 violated: expected lexeme: == | ^= | > | < | => | =< ");
+		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::Condition() {
+	cout << "<Condition> -> <Expression>  <Relop>   <Expression>" << endl;
 	if (expression()) {
 		if (Relop()) {
 			if (expression())
 				return true;
+			else {
+				reportErr("R23 violated");
+				return false;
+			}
 		}
+		else {
+			reportErr("R23 violated");
+			return false;
+		}
+	}
+	else {
+		reportErr("R23 violated");
+		return false;
 	}
 	return false;
 }
