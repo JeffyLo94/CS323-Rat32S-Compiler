@@ -19,15 +19,24 @@ Dev Note:
 	- wouldn't it never thrown an error?
 */
 
-SyntaxAn::SyntaxAn(string filename) {
-	file.open(filename);
+SyntaxAn::SyntaxAn(string inputFile, string outputFile) {
+	//Prepping InputFile
+	file.open(inputFile);
 	if (!file.is_open()) {
-		cerr << "Unable to open source file " << filename;
+		cerr << "InputFile already in use" << outputFile;
 	}
+
+	//Prepping OutputFile
+	outFile.open(outputFile, std::ofstream::out | std::ofstream::app);
+	if (!outFile.is_open()) {
+		cerr << "OutFile already in use" << outputFile;
+	}
+
 }
 
 SyntaxAn::~SyntaxAn() {
 	file.close();
+	outFile.close();
 }
 
 void SyntaxAn::reportErr(string msg) {

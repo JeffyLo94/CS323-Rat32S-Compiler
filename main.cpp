@@ -20,27 +20,38 @@
 #include <fstream>
 #include <string>
 #include "LexAn.h"
+#include "SyntaxAn.h"
 
 using namespace std;
 
 int main() {
 	string	line;
-	LexAn	magic;
 
 	string fileName;
 	ifstream sourceFile;
 
-	ofstream outfile("lexicalReport.txt", std::ofstream::out | std::ofstream::trunc);
+	//ofstream outfile("lexicalReport.txt", std::ofstream::out | std::ofstream::trunc);
+
+	//outfile << "--------------------------------------------------------" << endl;
+	//outfile << "Lexical Anlyzer Project" << endl;
+	//outfile << "*California State University, Fullerton(CSUF)" << endl;
+	//outfile << "*	CPSC 323 - Spring 2017" << endl;
+	//outfile << "* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia" << endl;
+	//outfile << "* Prof Song Choi" << endl;
+	//outfile << "*	Assignment #1 - Lexical Analyzer" << endl;
+	//outfile << "--------------------------------------------------------" << endl << endl;
+	ofstream outfile("SyntaxReport.txt", std::ofstream::out | std::ofstream::app);
 
 	outfile << "--------------------------------------------------------" << endl;
-	outfile << "Lexical Anlyzer Project" << endl;
+	outfile << "Compiler Project" << endl;
 	outfile << "*California State University, Fullerton(CSUF)" << endl;
 	outfile << "*	CPSC 323 - Spring 2017" << endl;
 	outfile << "* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia" << endl;
 	outfile << "* Prof Song Choi" << endl;
-	outfile << "*	Assignment #1 - Lexical Analyzer" << endl;
+	outfile << "*	Assignment #2 - Syntax Analyzer" << endl;
 	outfile << "--------------------------------------------------------" << endl << endl;
-	
+
+
 	do {
 		cout << "Please enter source file .txt (type EXIT to quit): ";
 		cin >> fileName;
@@ -63,28 +74,19 @@ int main() {
 					outfile << line << endl;
 				}
 			}
-			cout << endl << endl << "OUTPUT:" << endl;
-			cout << left << setw(20) << "Token:" << setw(20) << "Lexeme:" << endl << endl;
-			outfile << endl << endl << "OUTPUT:" << endl;
-			outfile << left << setw(20) << "Token:" << setw(20) << "Lexeme:" << endl << endl;
 
 			//Reset File to be read
 			sourceFile.clear();
 			sourceFile.seekg(0);
 
-			//Lex Analysis Begins Here:
-			while (!sourceFile.eof()) {
-				magic.lexer(sourceFile);
+			sourceFile.close(); //closing source file
+			outfile.close();
 
-				//Outputs Results if not at file end
-				if (magic.getLexeme() != "EOF") {
-					magic.print();
-					outfile << setw(20) << magic.getToken() << setw(20) << magic.getLexeme() << endl;
-				}
-			} //END While
+			//Syntax Analysis begins here:
+			SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
+			SyntaxChecker.Rat18S();
+			SyntaxChecker.~SyntaxAn();
 
-			sourceFile.close();				//Closing source file
-			magic.resetLineCounter();
 		}// END IF - command is not EXIT
 	} while( fileName != "EXIT" );
 
