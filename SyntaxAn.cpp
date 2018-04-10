@@ -293,8 +293,9 @@ bool SyntaxAn::OptDeclarationList() {
 bool SyntaxAn::DeclarationList() {
 	cout << " <Declaration List> -> <Declaration>; | <Declaration>; <Declaration List>" << endl;
 	if (Declaration()) {
-		lex.lexer(file);
-		if (lex.getLexeme() == ";") {
+		char ch = file.peek(); 
+		if (ch == ';'){
+			lex.lexer(file);
 			reportLexerResults();
 			if (DeclarationList()) {
 				return true;
@@ -334,10 +335,11 @@ bool SyntaxAn::Declaration() {
 bool SyntaxAn::IDs() {
 	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
 	lex.lexer(file);
-	if (lex.getToken() == "identifier") {
-		reportLexerResults();
-		lex.lexer(file);
-		if (lex.getLexeme() == ",") {
+	if (lex.getToken() == "IDENTIFER") {
+		char ch = file.peek(); 
+		if(ch == ',') {
+			reportLexerResults();
+			lex.lexer(file);
 			return IDs();
 		}
 		return true;
@@ -355,7 +357,7 @@ bool SyntaxAn::StatementList() {
 		if (StatementList()) {
 			return true;
 		}
-		return false;
+		return true;
 	}
 	else {
 		reportErr("R14 violated");
@@ -497,8 +499,9 @@ bool SyntaxAn::expression() {
 }
 
 bool SyntaxAn::expressionPrime() {
-	lex.lexer(file); 
-	if (lex.getLexeme() == "+") {
+	char ch = file.peek(); 
+	if (ch == '+') {
+		lex.lexer(file); 
 		reportLexerResults();
 		cout << "<Expression Prime> -> + <Term> <Expression Prime>" << endl;
 		if (term()) {
@@ -515,7 +518,8 @@ bool SyntaxAn::expressionPrime() {
 			return false;
 		}
 	}
-	else if (lex.getLexeme() == "-") {
+	else if (ch == '-') {
+		lex.lexer(file); 
 		reportLexerResults();
 		cout << "<Expression Prime> -> - <Term> <Expression Prime>" << endl;
 		if (term()) {
@@ -671,7 +675,7 @@ bool SyntaxAn::term() {
 
 bool SyntaxAn::primary() {
 	lex.lexer(file); 
-	if (lex.getToken() == "identifier") {
+	if (lex.getToken() == "IDENTIFIER") {
 		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
@@ -766,8 +770,9 @@ bool SyntaxAn::factor() {
 }
 
 bool SyntaxAn::termPrime() {
-	lex.lexer(file); 
-	if (lex.getLexeme() == "*") {
+	char ch = file.peek(); 
+	if (ch == '*') {
+		lex.lexer(file);
 		reportLexerResults();
 		cout << "<Term Prime> -> * <Term> <Term Prime>" << endl;
 		if (term()) {
@@ -784,7 +789,8 @@ bool SyntaxAn::termPrime() {
 			return false; 
 		}
 	}
-	else if (lex.getLexeme() == "/") {
+	else if (ch == '/') {
+		lex.lexer(file); 
 		reportLexerResults();
 		cout << "<Term Prime> -> / <Term> <Term Prime>" << endl;
 		if (term()) {
