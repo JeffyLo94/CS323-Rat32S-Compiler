@@ -54,7 +54,10 @@ void SyntaxAn::reportLexerResults() {
 bool SyntaxAn::Rat18S() {
 	cout << "<Rat18S> -> <Opt Function Definitions> %% <Opt Declaration List> <Statement List>" << endl;
 	if (OptFunctionDefinitions()) {
-		lex.lexer(file);
+		//If Lexer already ran, check lexeme
+		if (lex.getLexeme() == "") {
+			lex.lexer(file);
+		}
 		if (lex.getLexeme() == "%%") {
 			reportLexerResults();
 			if (OptDeclarationList()) {
@@ -321,12 +324,12 @@ bool SyntaxAn::Declaration() {
 			return true;
 		}
 		else {
-			reportErr("R12 violated");
+			reportErr("R12 violated: IDs Missing");
 			return false;
 		}
 	}
 	else {
-		reportErr("R12 violated");
+		reportErr("R12 violated: Qualifier Error");
 		return false;
 	}
 	return false;
@@ -335,7 +338,7 @@ bool SyntaxAn::Declaration() {
 bool SyntaxAn::IDs() {
 	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
 	lex.lexer(file);
-	if (lex.getToken() == "IDENTIFER") {
+	if (lex.getToken() == "IDENTIFIER") {
 		char ch = file.peek(); 
 		if(ch == ',') {
 			reportLexerResults();
@@ -345,7 +348,7 @@ bool SyntaxAn::IDs() {
 		return true;
 	}
 	else {
-		reportErr("R13 violated: expected token: identifier");
+		reportErr("R13 violated: expected token: IDENTIFIER");
 		return false;
 	}
 	return false;
