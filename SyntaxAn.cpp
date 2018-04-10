@@ -40,9 +40,33 @@ SyntaxAn::~SyntaxAn() {
 }
 
 void SyntaxAn::reportErr(string msg) {
-	cout << "Error at Line Number: " << lex.getCurrLineNum() << endl;
-	cout << "Syntax Error Lexeme: " << lex.getLexeme() << " Token: " << lex.getToken() << endl;
-	cout << msg << endl << endl;
+	string errorMsg;
+	stringstream ss;
+
+	ss << "Error at Line Number: " << lex.getCurrLineNum() << endl;
+	ss << "Syntax Error Lexeme: " << lex.getLexeme() << " Token: " << lex.getToken() << endl;
+	ss << msg << endl << endl;
+
+	errorMsg = ss.str();
+
+	errStack.push(errorMsg);
+}
+
+void SyntaxAn::clearErrors() {
+	while (!errStack.empty()) {
+		errStack.pop();
+		cerr << "Error Stack Cleared" << endl;
+	}
+}
+
+void SyntaxAn::printErrStack() {
+	string errStr;
+	while (!errStack.empty()) {
+		errStr = errStack.top();
+		cout << errStr;
+		outFile << errStr;
+		errStack.pop();
+	}
 }
 
 void SyntaxAn::reportLexerResults() {
@@ -63,25 +87,30 @@ bool SyntaxAn::Rat18S() {
 			if (OptDeclarationList()) {
 				if (StatementList()) {
 					return true;
+					clearErrors();
 				}
 				else {
 					reportErr("R1 Violated: Statement List Missing");
 					return false;
+					printErrStack();
 				}
 			}
 			else {
 				reportErr("R1 Violated: Opt Delaration List Missing");
 				return false;
+				printErrStack();
 			}
 		}
 		else {
 			reportErr("R1 Violated: Expected Lexeme: %%");
 			return false;
+			printErrStack();
 		}
 	}
 	else {
 		reportErr("R1 Violated");
 		return false;
+		printErrStack();
 	}
 }
 
@@ -93,6 +122,7 @@ bool SyntaxAn::OptFunctionDefinitions() {
 	}
 	else if (empty()) {
 		return true;
+		clearErrors();
 	}
 	else {
 		reportErr("R2 Violated");
