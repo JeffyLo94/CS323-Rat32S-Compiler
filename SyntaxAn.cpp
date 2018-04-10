@@ -338,10 +338,11 @@ bool SyntaxAn::Declaration() {
 bool SyntaxAn::IDs() {
 	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
 	lex.lexer(file);
+	reportLexerResults(); 
 	if (lex.getToken() == "IDENTIFIER") {
 		char ch = file.peek(); 
 		if(ch == ',') {
-			reportLexerResults();
+			//reportLexerResults();
 			lex.lexer(file);
 			return IDs();
 		}
