@@ -51,44 +51,42 @@ int main() {
 	outfile << "*	Assignment #2 - Syntax Analyzer" << endl;
 	outfile << "--------------------------------------------------------" << endl << endl;
 
+	cout << "Please enter source file .txt (type EXIT to quit): ";
+	//cin >> fileName;
+	fileName = "TestCase1-SyntaxAnalyzer.txt";
+	cout << " " << fileName << endl << endl;
 
-	do {
-		cout << "Please enter source file .txt (type EXIT to quit): ";
-		cin >> fileName;
-		cout << " " << fileName << endl << endl;
+	if (fileName != "EXIT") {
+		//Open the file which the user entered in
+		sourceFile.open(fileName.c_str());
 
-		if (fileName != "EXIT") {
-			//Open the file which the user entered in
-			sourceFile.open(fileName.c_str());
-
-			//Make sure the files were opened properly
-			if (!sourceFile.is_open()) {
-				cerr << "Unable to open source file " << fileName << ".\nPlease make sure you enter the correct name.";
-				exit(1);
+		//Make sure the files were opened properly
+		if (!sourceFile.is_open()) {
+			cerr << "Unable to open source file " << fileName << ".\nPlease make sure you enter the correct name.";
+			exit(1);
+		}
+		else { // OUTPUT Source Text Code
+			cout		<< "Source File Text:" << endl << endl;
+			outfile		<< "Source File Text:" << endl << endl;
+			while (getline(sourceFile, line)) {
+				cout	<< line << endl;
+				outfile << line << endl;
 			}
-			else { // OUTPUT Source Text Code
-				cout		<< "Source File Text:" << endl << endl;
-				outfile		<< "Source File Text:" << endl << endl;
-				while (getline(sourceFile, line)) {
-					cout	<< line << endl;
-					outfile << line << endl;
-				}
-			}
+		}
 
-			//Reset File to be read
-			sourceFile.clear();
-			sourceFile.seekg(0);
+		//Reset File to be read
+		sourceFile.clear();
+		sourceFile.seekg(0);
 
-			sourceFile.close(); //closing source file
-			outfile.close();
+		sourceFile.close(); //closing source file
+		outfile.close();
 
-			//Syntax Analysis begins here:
-			SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
-			SyntaxChecker.Rat18S();
-			//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
+		//Syntax Analysis begins here:
+		SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
+		SyntaxChecker.Rat18S();
+		//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
 
-		}// END IF - command is not EXIT
-	} while( fileName != "EXIT" );
+	}
 
 
 	//Closing output filestream
