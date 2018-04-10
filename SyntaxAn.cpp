@@ -586,9 +586,12 @@ bool SyntaxAn::If() {
 						}
 						else if (lex.getLexeme() == "else") {
 							reportLexerResults();
+							lex.lexer(file);
 							if (statement()) {
+								lex.lexer(file);
 								if (lex.getLexeme() == "endif") {
 									reportLexerResults();
+									lex.lexer(file);
 									return true;
 								}
 								else {

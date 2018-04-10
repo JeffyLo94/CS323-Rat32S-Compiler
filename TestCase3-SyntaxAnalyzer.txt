@@ -11,6 +11,9 @@ int temp$;
 			x = y;
 			y = temp;
 		}
+		else {
+			x=y;
+		}
 		endif
 
         return x;
