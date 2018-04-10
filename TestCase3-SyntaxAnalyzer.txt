@@ -4,14 +4,16 @@
 ! Qualifier, Function Definition, Opt Function Definition !
 
 function convert$ [x:int,y:int]
+int temp$;
 {
-		int temp$ = x;
+		temp$ = x;
 		if(y > x) {
 			x = y;
 			y = temp;
 		}
+		endif
 
-           return x;
+        return x;
 
 }
 

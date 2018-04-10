@@ -181,10 +181,9 @@ bool  SyntaxAn::OptParameterList() {
 bool  SyntaxAn::ParameterList() {
 	cout << "<Paramter List> -> <Parameter> | <Parameter>, <Parameter List>" << endl;
 	if (Parameter()) {
-		char ch = file.peek();
-		if (ch == ',') {
-			lex.lexer(file);
+		if (lex.getLexeme() == ",") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (ParameterList()) {
 				return true;
 			}
@@ -343,8 +342,8 @@ bool SyntaxAn::IDs() {
 }
 
 bool SyntaxAn::StatementList() {
-	cout << "<Statement List> -> <Statement> | <Statement> <Statement List>" << endl;
 	if (statement() && lex.getLexeme() != "EOF") {
+		cout << "<Statement List> -> <Statement> | <Statement> <Statement List>" << endl;
 		if (StatementList()) {
 			return true;
 		}
@@ -573,14 +572,16 @@ bool SyntaxAn::If() {
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (Condition()) {
-				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
 					reportLexerResults();
+					lex.lexer(file);
 					if (statement()) {
 						lex.lexer(file); 
 						if (lex.getLexeme() == "endif") {
 							reportLexerResults();
+							lex.lexer(file);
 							return true;
 						}
 						else if (lex.getLexeme() == "else") {
@@ -647,6 +648,17 @@ bool SyntaxAn::term() {
 }
 
 bool SyntaxAn::primary() {
+	char ch = file.peek();
+	if (ch == '(') {
+		reportLexerResults();
+		lex.lexer(file);
+		reportLexerResults();
+		lex.lexer(file);
+		if (IDs()) {
+			reportLexerResults();
+			return true;
+		}
+	}
 	if (lex.getToken() == "IDENTIFIER") {
 		reportLexerResults();
 		char ch = file.peek();
@@ -869,7 +881,6 @@ bool SyntaxAn::compound() {
 		lex.lexer(file);
 		cout << "<Compound> -> {  <Statement List>  } " << endl;
 		if (StatementList()) {
-			lex.lexer(file); 
 			if (lex.getLexeme() == "}") {
 				reportLexerResults();
 				return true;
