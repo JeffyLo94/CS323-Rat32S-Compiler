@@ -263,12 +263,18 @@ void LexAn::lexer(ifstream& inFile) {
 
 		if (ch == '\n') {
 			++lineCounter;
-			cout << "TotalLines: " << lineCounter << endl;
+			//cout << "TotalLines: " << lineCounter << endl;
 		}
 
 		//Check if character is possible seperator, possible operator, wSpace, or EOF
 		if (isPossibleSepChar(ch)) {					//Possibly Found a Seperator
-			if (!lexStr.empty()) {
+			if (ch == '!') {
+				do {
+					ch = inFile.get();
+				} while (ch != '!');
+				ch = inFile.get(); // Totally Skips Comments
+			}
+			else if (!lexStr.empty()) {
 				inFile.unget();							//We have a string but hit a sperator
 				handler = STRING;
 				found = true;

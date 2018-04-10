@@ -46,7 +46,7 @@ void SyntaxAn::reportErr(string msg) {
 }
 
 void SyntaxAn::reportLexerResults() {
-	cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme << endl;
+	cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme() << endl;
 }
 
 //Jeffrey:
@@ -117,14 +117,14 @@ bool  SyntaxAn::Function() {
 	if (lex.getLexeme() == "function"){
 		reportLexerResults();
 		lex.lexer(file);
-		if (lex.getToken == "IDENTIFIER") {
+		if (lex.getToken() == "IDENTIFIER") {
 			reportLexerResults();
 			lex.lexer(file);
-			if (lex.getLexeme == "[") {
+			if (lex.getLexeme() == "[") {
 				reportLexerResults();
 				if (OptParameterList()) {
 					lex.lexer(file);
-					if (lex.getLexeme == "]") {
+					if (lex.getLexeme() == "]") {
 						reportLexerResults();
 						if (OptDeclarationList()) {
 							if (Body()) {
@@ -207,7 +207,7 @@ bool  SyntaxAn::Parameter() {
 	cout << "<Paramter> -> <IDs> : <Qualifier>" << endl;
 	if (IDs()) {
 		lex.lexer(file);
-		if (lex.getLexeme == ":") {
+		if (lex.getLexeme() == ":") {
 			reportLexerResults();
 			if (Qualifier()) {
 				return true;
@@ -337,8 +337,7 @@ bool SyntaxAn::IDs() {
 	if (lex.getToken() == "identifier") {
 		reportLexerResults();
 		lex.lexer(file);
-		if (lex.getLexeme == ",") {
-			reportLexerResults();
+		if (lex.getLexeme() == ",") {
 			return IDs();
 		}
 		return true;
@@ -550,8 +549,7 @@ bool SyntaxAn::While() {
 	if (lex.getLexeme() == "while") {
 		reportLexerResults();
 		lex.lexer(file); 
-		if (lex.getLexeme == "(") {
-			reportLexerResults();
+		if (lex.getLexeme() == "(") {
 			if (Condition()) {
 				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
@@ -854,8 +852,7 @@ bool SyntaxAn::scan() {
 
 bool SyntaxAn::print() {
 	lex.lexer(file); 
-	if (lex.getLexeme == "put") {
-		reportLexerResults();
+	if (lex.getLexeme() == "put") {
 		cout << "<Scan> -> put(<expression>);" << endl;
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
@@ -926,8 +923,8 @@ bool SyntaxAn::compound() {
 
 bool SyntaxAn::Return() { 
 	lex.lexer(file); 
-	if (lex.getLexeme == "return") {
-		reportLexerResults();
+	if (lex.getLexeme() == "return") {
+
 		lex.lexer(file); 
 		if (lex.getLexeme() == ";") {
 			reportLexerResults();

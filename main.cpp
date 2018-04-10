@@ -85,14 +85,16 @@ int main() {
 			//Syntax Analysis begins here:
 			SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
 			SyntaxChecker.Rat18S();
-			SyntaxChecker.~SyntaxAn(); //Make sure files are closed
+			//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
 
 		}// END IF - command is not EXIT
 	} while( fileName != "EXIT" );
 
 
 	//Closing output filestream
-	outfile.close();
+	if (outfile.is_open()) {
+		outfile.close();
+	}
 
 	system("pause");
 	return 0;
