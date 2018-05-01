@@ -8,6 +8,7 @@ function convert$ [fahr:int]
 
 %%
      int    low,  high, step$;      ! declarations !
+	int a;
 
      get (low, high, step$);
      while (low  <  high )  

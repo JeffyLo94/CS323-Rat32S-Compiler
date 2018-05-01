@@ -281,10 +281,6 @@ bool SyntaxAn::OptDeclarationList() {
 	else if (empty()) {
 		return true;
 	}
-	//else {
-	//	reportErr("R10 violated");
-	//	return false;
-	//}
 	return false;
 }
 
@@ -294,12 +290,12 @@ bool SyntaxAn::DeclarationList() {
 		if (lex.getLexeme() == ";") {
 			reportLexerResults();
 			lex.lexer(file);
+
+			if (DeclarationList()) {
+				return true;
+			}
 			return true;
 		}
-	}
-	else {
-		reportErr("R11 violated");
-		return false;
 	}
 	return false;
 }
@@ -311,15 +307,12 @@ bool SyntaxAn::Declaration() {
 			return true;
 		}
 		else {
-			reportErr("R12 violated: IDs Missing");
 			return false;
 		}
 	}
 	else {
-		reportErr("R12 violated: Qualifier Error");
 		return false;
 	}
-	return false;
 }
 
 bool SyntaxAn::IDs() {
