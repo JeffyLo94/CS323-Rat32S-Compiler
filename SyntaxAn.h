@@ -17,9 +17,13 @@
 #define SyntaxAn_H
 
 #include <string>
-#include <stack>
-#include <sstream>
 #include "LexAn.h"
+
+struct symbol_table {
+	ind address = 0;
+	string op = "";
+	string oprnd = "";
+}
 
 class SyntaxAn {
 public:
@@ -63,19 +67,17 @@ public:
 	bool compound();
 	bool Return();
 
+	int instr_address = 1;
 
 private:
 	//Helper Methods:
 	void reportErr(string msg);
 	void reportLexerResults();
-	void clearErrors();
-	void printErrStack();
 
 	//Lexical Analyzer
 	LexAn lex;
 	ifstream file;
 	ofstream outFile;
-	stack<string> errStack;
 };
 
 #endif

@@ -13,12 +13,6 @@
 ***********************************************************/
 #include "SyntaxAn.h"
 
-/*
-Dev Note:
-- If a rule has | <empty>
-	- wouldn't it never thrown an error?
-*/
-
 SyntaxAn::SyntaxAn(string inputFile, string outputFile) {
 	//Prepping InputFile
 	file.open(inputFile);
@@ -40,33 +34,9 @@ SyntaxAn::~SyntaxAn() {
 }
 
 void SyntaxAn::reportErr(string msg) {
-	string errorMsg;
-	stringstream ss;
-
-	ss << "Error at Line Number: " << lex.getCurrLineNum() << endl;
-	ss << "Syntax Error Lexeme: " << lex.getLexeme() << " Token: " << lex.getToken() << endl;
-	ss << msg << endl << endl;
-
-	errorMsg = ss.str();
-
-	errStack.push(errorMsg);
-}
-
-void SyntaxAn::clearErrors() {
-	while (!errStack.empty()) {
-		errStack.pop();
-		cerr << "Error Stack Cleared" << endl;
-	}
-}
-
-void SyntaxAn::printErrStack() {
-	string errStr;
-	while (!errStack.empty()) {
-		errStr = errStack.top();
-		cout << errStr;
-		outFile << errStr;
-		errStack.pop();
-	}
+	cout << "Error at Line Number: " << lex.getCurrLineNum() << endl;
+	cout << "Syntax Error Lexeme: " << lex.getLexeme() << " Token: " << lex.getToken() << endl;
+	cout << msg << endl << endl;
 }
 
 void SyntaxAn::reportLexerResults() {
@@ -74,98 +44,57 @@ void SyntaxAn::reportLexerResults() {
 }
 
 //Jeffrey:
-//R1. <Rat18S>  :: = <Opt Function Definitions>   %%  <Opt Declaration List>  <Statement List>
+//R1. <Rat18S>  :: = %%  <Opt Declaration List>  <Statement List>
 bool SyntaxAn::Rat18S() {
-	cout << "<Rat18S> -> <Opt Function Definitions> %% <Opt Declaration List> <Statement List>" << endl;
-	if (OptFunctionDefinitions()) {
-		//If Lexer already ran, check lexeme
-		if (lex.getLexeme() == "") {
-			lex.lexer(file);
-		}
-		if (lex.getLexeme() == "%%") {
-			reportLexerResults();
-			if (OptDeclarationList()) {
-				if (StatementList()) {
-					return true;
-					clearErrors();
-				}
-				else {
-					reportErr("R1 Violated: Statement List Missing");
-					printErrStack();
-					return false;
-				}
+	cout << "<Rat18S> -> %% <Opt Declaration List> <Statement List>" << endl;
+
+	lex.lexer(file);
+	if (lex.getLexeme() == "%%") {
+		reportLexerResults();
+		lex.lexer(file);
+		if (OptDeclarationList()) {
+			if (StatementList()) {
+				return true;
 			}
-			else {
-				reportErr("R1 Violated: Opt Delaration List Missing");
-				printErrStack();
-				return false;
-			}
-		}
-		else {
-			reportErr("R1 Violated: Expected Lexeme: %%");
-			printErrStack();
-			return false;
 		}
 	}
+
+	if (lex.getLexeme() == "EOF") {
+		cout << "Successful parsing" << endl;
+		return true;
+	}
 	else {
-		reportErr("R1 Violated");
-		printErrStack();
+		reportErr("R1 Violated: Incomplete RAT18S");
 		return false;
 	}
 }
 
-//R2. <Opt Function Definitions> :: = <Function Definitions> | <Empty>
-bool SyntaxAn::OptFunctionDefinitions() {
-	cout << "<Opt Function Definitions> -> <Function Definitions> | <Empty>" << endl;
-	if (FunctionDefinitions()) {
-		clearErrors();
-		return true;
-	}
-	else if (empty()) {
-		clearErrors();
-		return true;
-	}
-	else {
-		reportErr("R2 Violated");
-		return false;
-	}
-}
-//R3. <Function Definitions>  :: = <Function> | <Function> <Function Definitions>
-bool  SyntaxAn::FunctionDefinitions() {
-	cout << "<Function Definitions> -> <Function> | <Function> <Function Definitions>" << endl;
-	if (Function()) {
-		if (FunctionDefinitions()) {
-			clearErrors();
-
-			return true;
-		}
-		clearErrors();
-		return true;
-	}
-	else {
-		reportErr("R3 Violated: Function undefined");
-		return false;
-	}
-}
 //R4. <Function> :: = function  <Identifier>[<Opt Parameter List>]  <Opt Declaration List>  <Body>
 bool  SyntaxAn::Function() {
 	cout << "<Function> -> function  <Identifier>[<Opt Parameter List>]  <Opt Declaration List>  <Body>" << endl;
-	lex.lexer(file);
 	if (lex.getLexeme() == "function"){
-		reportLexerResults();
 		lex.lexer(file);
+		reportLexerResults();
 		if (lex.getToken() == "IDENTIFIER") {
-			reportLexerResults();
 			lex.lexer(file);
+			reportLexerResults();
 			if (lex.getLexeme() == "[") {
-				reportLexerResults();
+				lex.lexer(file);
 				if (OptParameterList()) {
-					lex.lexer(file);
 					if (lex.getLexeme() == "]") {
 						reportLexerResults();
-						if (OptDeclarationList()) {
+						lex.lexer(file);
+						if (lex.getLexeme() == "{") {
 							if (Body()) {
-								clearErrors();
+								return true;
+							}
+							else {
+								reportErr("R4 Violated: Body Missing");
+								return false;
+							}
+						}
+						else if (OptDeclarationList()) {
+							if (Body()) {
 								return true;
 							}
 							else {
@@ -198,37 +127,26 @@ bool  SyntaxAn::Function() {
 			return false;
 		}
 	}
-	else {
-		reportErr("R4 Vioated: Expected Lexeme: function");
-		return false;
-	}
+	return false;
 }
 //R5. <Opt Parameter List> :: = <Parameter List> | <Empty>
 bool  SyntaxAn::OptParameterList() {
 	cout << "<Opt Paramter List> -> <Parameter List> | <Empty>" << endl;
 	if (ParameterList()) {
-		clearErrors();
 		return true;
 	}
 	else if (empty()) {
-		clearErrors();
 		return true;
-	}
-	else {
-		reportErr("R5 Violated: Opt Parameter List Violation");
-		return false;
 	}
 }
 //R6. <Parameter List>  :: = <Parameter> | <Parameter>, <Parameter List>
 bool  SyntaxAn::ParameterList() {
 	cout << "<Paramter List> -> <Parameter> | <Parameter>, <Parameter List>" << endl;
 	if (Parameter()) {
-		char ch = file.peek();
-		if (ch == ',') {
-			lex.lexer(file);
+		if (lex.getLexeme() == ",") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (ParameterList()) {
-				clearErrors();
 				return true;
 			}
 			else {
@@ -236,7 +154,6 @@ bool  SyntaxAn::ParameterList() {
 				return false;
 			}
 		}
-		clearErrors();
 		return true;
 	}
 	else {
@@ -248,11 +165,10 @@ bool  SyntaxAn::ParameterList() {
 bool  SyntaxAn::Parameter() {
 	cout << "<Paramter> -> <IDs> : <Qualifier>" << endl;
 	if (IDs()) {
-		lex.lexer(file);
 		if (lex.getLexeme() == ":") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (Qualifier()) {
-				clearErrors();
 				return true;
 			}
 			else {
@@ -272,7 +188,7 @@ bool  SyntaxAn::Parameter() {
 }
 
 //Arman
-//R8. <Qualifier> :: = int | boolean | real
+//R8. <Qualifier> :: = int | boolean
 //R9. <Body>  :: = { < Statement List> }
 //R10. <Opt Declaration List> :: = <Declaration List> | <Empty>
 //R11. <Declaration List>  : = <Declaration>; | <Declaration>; <Declaration List>
@@ -282,11 +198,10 @@ bool  SyntaxAn::Parameter() {
 //R24. <Relop> :: = == | ^= | > | < | => | =<
 //R23. <Condition> :: = <Expression>  <Relop>   <Expression>
 bool SyntaxAn::Qualifier() {
-	lex.lexer(file);
-	cout << "<Qualifier> -> int | boolean | real" << endl;
-	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean" || lex.getLexeme() == "real") {
+	cout << "<Qualifier> -> int | boolean " << endl;
+	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean") {
 		reportLexerResults();
-		clearErrors();
+		lex.lexer(file);
 		return true;
 	}
 	return false;
@@ -294,14 +209,14 @@ bool SyntaxAn::Qualifier() {
 
 bool SyntaxAn::Body() {
 	cout << "<Body> -> { <Statement list> }" << endl;
-	lex.lexer(file);
 	if (lex.getLexeme() == "{") {
 		reportLexerResults();
+		lex.lexer(file);
 		if (StatementList()) {
-			lex.lexer(file);
+			//lex.lexer(file);
 			if (lex.getLexeme() == "}") {
 				reportLexerResults();
-				clearErrors();
+				lex.lexer(file);
 				return true;
 			}
 			else {
@@ -323,16 +238,10 @@ bool SyntaxAn::Body() {
 bool SyntaxAn::OptDeclarationList() {
 	cout << "<Opt Declaration List> -> <Declaration List> | <Empty>" << endl;
 	if (DeclarationList()) {
-		clearErrors();
 		return true;
 	}
 	else if (empty()) {
-		clearErrors();
 		return true;
-	}
-	else {
-		reportErr("R10 violated");
-		return false;
 	}
 	return false;
 }
@@ -340,25 +249,15 @@ bool SyntaxAn::OptDeclarationList() {
 bool SyntaxAn::DeclarationList() {
 	cout << " <Declaration List> -> <Declaration>; | <Declaration>; <Declaration List>" << endl;
 	if (Declaration()) {
-		char ch = file.peek(); 
-		if (ch == ';'){
-			lex.lexer(file);
+		if (lex.getLexeme() == ";") {
 			reportLexerResults();
+			lex.lexer(file);
+
 			if (DeclarationList()) {
-				clearErrors();
 				return true;
 			}
-			clearErrors();
 			return true;
 		}
-		else {
-			reportErr("R11 violated: expected lexeme: ;");
-			return false;
-		}
-	}
-	else {
-		reportErr("R11 violated");
-		return false;
 	}
 	return false;
 }
@@ -367,36 +266,27 @@ bool SyntaxAn::Declaration() {
 	cout << "<Declaration> -> <Qualifier > <IDs>" << endl;
 	if (Qualifier()) {
 		if (IDs()) {
-			clearErrors();
 			return true;
 		}
 		else {
-			reportErr("R12 violated: IDs Missing");
 			return false;
 		}
 	}
 	else {
-		reportErr("R12 violated: Qualifier Error");
 		return false;
 	}
-	return false;
 }
 
 bool SyntaxAn::IDs() {
 	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
-	lex.lexer(file);
-	reportLexerResults(); 
 	if (lex.getToken() == "IDENTIFIER") {
-		char ch = file.peek(); 
-		if(ch == ',') {
-			//reportLexerResults();
+		reportLexerResults();
+		lex.lexer(file);
+		if(lex.getLexeme() == ",") {
+			reportLexerResults();
 			lex.lexer(file);
-			if (IDs()) {
-				clearErrors();
-				return true;
-			}
+			return IDs();
 		}
-		clearErrors();
 		return true;
 	}
 	else {
@@ -407,17 +297,17 @@ bool SyntaxAn::IDs() {
 }
 
 bool SyntaxAn::StatementList() {
-	cout << " <Statement List> -> <Statement> | <Statement> <Statement List>" << endl;
-	if (statement()) {
+	if (statement() && lex.getLexeme() != "EOF") {
+		cout << "<Statement List> -> <Statement> | <Statement> <Statement List>" << endl;
 		if (StatementList()) {
-			clearErrors();
 			return true;
 		}
-		clearErrors();
 		return true;
 	}
 	else {
-		reportErr("R14 violated");
+		if (lex.getLexeme() == "EOF") {
+			return false;
+		}
 		return false;
 	}
 	return false;
@@ -425,10 +315,40 @@ bool SyntaxAn::StatementList() {
 
 bool SyntaxAn::Relop() {
 	cout << "<Relop> -> == | ^= | > | < | => | =<" << endl;
-	lex.lexer(file);
 	if (lex.getLexeme() == "==" || lex.getLexeme() == "^=" || lex.getLexeme() == ">" || lex.getLexeme() == "<" || lex.getLexeme() == "=>" || lex.getLexeme() == "=<") {
+		if (lex.getLexeme() == "==") {
+				gen_instr("EQU","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+		else if (lex.getLexeme() == "^=") {
+				gen_instr("NEQ","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+		else if (lex.getLexeme() == ">") {
+				gen_instr("GRT","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+		else if (lex.getLexeme() == "<") {
+				gen_instr("LES","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+		else if (lex.getLexeme() == "=>" ) {
+				gen_instr("GEQ","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+		else if (lex.getLexeme() == "=<") {
+				gen_instr("LEQ","nil");
+				push_jumpstack(instr_address);
+				gen_instr("JUMPZ", "nil");
+		}
+
 		reportLexerResults();
-		clearErrors();
+		lex.lexer(file);
 		return true;
 	}
 	else {
@@ -442,10 +362,8 @@ bool SyntaxAn::Condition() {
 	cout << "<Condition> -> <Expression>  <Relop>   <Expression>" << endl;
 	if (expression()) {
 		if (Relop()) {
-			if (expression()) {
-				clearErrors();
+			if (expression())
 				return true;
-			}
 			else {
 				reportErr("R23 violated");
 				return false;
@@ -477,57 +395,48 @@ bool SyntaxAn::Condition() {
 //R27. <Term> :: = <Factor> <Term Prime>
 //R28. <Term Prime> :: = *<Factor> <Term Prime> | / <Factor> <Term Prime> | <Empty>
 //R29. <Factor> :: = -<Primary> | <Primary>
-//R30. <Primary> :: = <Identifier> | <Integer> | <Identifier>  (<IDs>) | (<Expression>) | <Real> | true | false
+//R30. <Primary> :: = <Identifier> | <Integer> | <Identifier>  (<IDs>) | (<Expression>) | true | false
 //R31. <Empty>   :: = e
 bool SyntaxAn::statement() {
 	if (compound()) {
-		clearErrors();
 		return true;
 	}
 	else if (assign()) {
-		clearErrors();
 		return true;
 	}
 	else if (While()) {
-		clearErrors();
 		return true;
 	}
 	else if (If()) {
-		clearErrors();
 		return true;
 	}
 	else if (Return()) {
-		clearErrors();
 		return true;
 	}
 	else if (print()) {
-		clearErrors();
 		return true;
 	}
 	else if (scan()) {
-		clearErrors();
 		return true;
 	}
-	else {
-		reportErr("R15 violated expected <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While>"); 
-		return false; 
-	}
+	//reportErr("R15 violated expected <Compound> | <Assign> | <If> | <Return> | <Print> | <Scan> | <While>");
 	return false;
 }
 
 bool SyntaxAn::assign() {
-	cout << "<Assign> -> <Identifier> = <Expression>" << endl;
-	lex.lexer(file); 
 	if (lex.getToken() == "IDENTIFIER") {
+		cout << "<Assign> -> <Identifier> = <Expression>" << endl;
 		reportLexerResults();
 		lex.lexer(file); 
+		string save = let.getLexeme();
 		if (lex.getLexeme() == "=") {
 			reportLexerResults();
+			lex.lexer(file);
+			gen_instr("POPM", get_address (save));
 			if (expression()) {
-				lex.lexer(file); 
 				if (lex.getLexeme() == ";") {
 					reportLexerResults();
-					clearErrors();
+					lex.lexer(file);
 					return true;
 				}
 				else {
@@ -545,10 +454,6 @@ bool SyntaxAn::assign() {
 			return false;
 		}
 	}
-	else {
-		reportErr("R17 violated: expected token: IDENTIFIER");
-		return false;
-	}
 	return false;
 }
 
@@ -556,7 +461,6 @@ bool SyntaxAn::expression() {
 	cout << "<Expression> -> <Term> <Expression Prime>" << endl;;
 	if (term()) {
 		if (expressionPrime()) {
-			clearErrors();
 			return true;
 		}
 		else {
@@ -568,14 +472,13 @@ bool SyntaxAn::expression() {
 }
 
 bool SyntaxAn::expressionPrime() {
-	char ch = file.peek(); 
-	if (ch == '+') {
-		lex.lexer(file); 
+	if (lex.getLexeme() == "+") {
 		reportLexerResults();
+		lex.lexer(file); 
+		gen_instr ("ADD", "nill");
 		cout << "<Expression Prime> -> + <Term> <Expression Prime>" << endl;
 		if (term()) {
 			if (expressionPrime()) {
-				clearErrors();
 				return true;
 			}
 			else {
@@ -588,13 +491,12 @@ bool SyntaxAn::expressionPrime() {
 			return false;
 		}
 	}
-	else if (ch == '-') {
-		lex.lexer(file); 
+	else if (lex.getLexeme() == "-") {
 		reportLexerResults();
+		lex.lexer(file); 
 		cout << "<Expression Prime> -> - <Term> <Expression Prime>" << endl;
 		if (term()) {
 			if (expressionPrime()) {
-				clearErrors();
 				return true;
 			}
 			else {
@@ -608,30 +510,28 @@ bool SyntaxAn::expressionPrime() {
 		}
 	}
 	else if (empty()) {
-		clearErrors();
 		return true;
-	}
-	else {
-		reportErr("R6 violated");
-		return false;
 	}
 	return false;
 }
 
 bool SyntaxAn::While() {
-	cout << "<Statement> -> <While>" << endl;
-	cout << "<While> -> ( <Condition>  )  <Statement> " << endl;
-	lex.lexer(file); 
 	if (lex.getLexeme() == "while") {
+		cout << "<Statement> -> <While>" << endl;
+		cout << "<While> -> ( <Condition>  )  <Statement> " << endl;
+		int addr = instr_address;
+		gen_instr ("LABEL",nill);
 		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
+			lex.lexer(file);
 			if (Condition()) {
-				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
+					gen_instr("JUMP", addr);
+					back_patch(instr_address);
 					reportLexerResults();
+					lex.lexer(file);
 					if (statement()) {
-						clearErrors();
 						return true;
 					}
 					else {
@@ -654,39 +554,39 @@ bool SyntaxAn::While() {
 			return false;
 		}
 	}
-	else {
-		reportErr("R22 violated: expected \'while\'");
-		return false;
-	}
 	return false;
 }
 
 bool SyntaxAn::If() {
-	cout << "<Statement> -> <If>" << endl;
-	cout << "<If> -> if  ( <Condition>  ) <Statement>   endif |\n if  ( <Condition>  ) <Statement>   else  <Statement>  endif" << endl;
-	lex.lexer(file); 
 	if (lex.getLexeme() == "if") {
+		int addr = instr_address();
+		cout << "<Statement> -> <If>" << endl;
+		cout << "<If> -> if  ( <Condition>  ) <Statement>   endif |\n if  ( <Condition>  ) <Statement>   else  <Statement>  endif" << endl;
 		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (Condition()) {
-				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
+					back_patch(instr_address);
 					reportLexerResults();
+					lex.lexer(file);
 					if (statement()) {
 						lex.lexer(file); 
 						if (lex.getLexeme() == "endif") {
 							reportLexerResults();
-							clearErrors();
+							lex.lexer(file);
 							return true;
 						}
 						else if (lex.getLexeme() == "else") {
 							reportLexerResults();
+							lex.lexer(file);
 							if (statement()) {
+								lex.lexer(file);
 								if (lex.getLexeme() == "endif") {
 									reportLexerResults();
-									clearErrors();
+									lex.lexer(file);
 									return true;
 								}
 								else {
@@ -724,18 +624,14 @@ bool SyntaxAn::If() {
 			return false;
 		}
 	}
-	else {
-		reportErr("R18 violated: expected lexeme: if");
-		return false;
-	}
 	return false;
 }
 
 bool SyntaxAn::term() {
 	cout << "<Term> -> <Factor> <Term Prime>" << endl;
 	if (factor()) {
+		lex.lexer(file);
 		if (termPrime()) {
-			clearErrors();
 			return true;
 		}
 		else {
@@ -750,18 +646,29 @@ bool SyntaxAn::term() {
 }
 
 bool SyntaxAn::primary() {
-	lex.lexer(file); 
+	char ch = file.peek();
+	if (ch == '(') {
+		reportLexerResults();
+		lex.lexer(file);
+		reportLexerResults();
+		lex.lexer(file);
+		if (IDs()) {
+			reportLexerResults();
+			return true;
+		}
+	}
 	if (lex.getToken() == "IDENTIFIER") {
 		reportLexerResults();
-		lex.lexer(file); 
-		if (lex.getLexeme() == "(") {
+		char ch = file.peek();
+		gen_instr("PUSHM", get_address (token));
+		if (ch== '(') {
+			lex.lexer(file);
 			reportLexerResults();
 			if (IDs()) {
 				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
 					reportLexerResults();
 					cout << "<Primary> -> <Identifier> (<IDs>)" << endl;
-					clearErrors();
 					return true;
 				}
 				else {
@@ -776,24 +683,21 @@ bool SyntaxAn::primary() {
 		}
 		else {
 			cout << "<Primary> -> <Identifier>" << endl;
-			clearErrors();
 			return true;
 		}
 	}
 	else if (lex.getToken() == "INTEGER") {
 		reportLexerResults();
 		cout << "<Primary> -> <Integer>" << endl;
-		clearErrors();
 		return true;
 	}
 	else if (lex.getLexeme() == "(") {
 		reportLexerResults();
+		lex.lexer(file);
 		if (expression()) {
-			lex.lexer(file); 
 			if (lex.getLexeme() == ")") {
 				reportLexerResults();
 				cout << "<Primary> -> (<Expression>)" << endl;
-				clearErrors();
 				return true;
 			}
 			else {
@@ -806,46 +710,35 @@ bool SyntaxAn::primary() {
 			return false; 
 		}
 	}
-	else if (lex.getToken() == "REAL") {
-		reportLexerResults();
-		cout << "<Primary> -> <Real>" << endl;
-		clearErrors();
-		return true;
-	}
 	else if (lex.getLexeme() == "true") {
 		reportLexerResults();
 		cout << "<Primary> -> true" << endl;
-		clearErrors();
 		return true;
 	}
 	else if (lex.getLexeme() == "false") {
 		reportLexerResults();
 		cout << "<Primary> -> false" << endl;
-		clearErrors();
 		return true;
 	}
 	else {
 		reportErr("R30 violated"); 
-		return false; 
+		return true; 
 	}
 	return false;
 }
 
 bool SyntaxAn::factor() {
-	lex.lexer(file); 
+	//If the factor is negative
 	if (lex.getLexeme() == "-") {
 		reportLexerResults();
-		cout << "<Factor> -> -<Primary>"; 
-			
+		cout << "<Factor> -> -<Primary>" << endl; 
 			if (primary()) {
-				clearErrors();
 				return true;
 			}
 	}
 	else if (primary()) {
-		cout << "<Factor> -> <Primary>"; 
-		clearErrors();
-			return true;
+		cout << "<Factor> -> <Primary>" << endl;
+		return true;
 	}
 	else {
 		reportErr("R29 violated"); 
@@ -855,33 +748,28 @@ bool SyntaxAn::factor() {
 }
 
 bool SyntaxAn::termPrime() {
-	char ch = file.peek(); 
-	if (ch == '*') {
-		lex.lexer(file);
+	if (lex.getLexeme() == "*") {
 		reportLexerResults();
+		lex.lexer(file);
+		gen_instr("MUL", "nil");
 		cout << "<Term Prime> -> * <Term> <Term Prime>" << endl;
 		if (term()) {
-			if (expressionPrime()) {
-				clearErrors();
+			if (termPrime()) {
 				return true;
 			}
-			else {
-				reportErr("R28 violated: expected <Expression Prime>");
-				return false; 
-			}
+			return false; 
 		}
 		else {
 			reportErr("R28 violated: expected <term>");
 			return false; 
 		}
 	}
-	else if (ch == '/') {
-		lex.lexer(file); 
+	else if (lex.getLexeme() == "/") {
 		reportLexerResults();
+		lex.lexer(file); 
 		cout << "<Term Prime> -> / <Term> <Term Prime>" << endl;
 		if (term()) {
 			if (expressionPrime()) {
-				clearErrors();
 				return true;
 			}
 			else {
@@ -895,28 +783,25 @@ bool SyntaxAn::termPrime() {
 		}
 	}
 	else if (empty()) {
-		clearErrors();
 		return true;
 	}
-	return false;
 }
 
 bool SyntaxAn::scan() {
-	lex.lexer(file); 
 	if (lex.getLexeme() == "get") {
-		reportLexerResults();
 		cout << "<Scan> -> get(<IDs>);" << endl;
+		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (IDs()) {
-				lex.lexer(file); 
 				if (lex.getLexeme() == ")") {
 					reportLexerResults();
 					lex.lexer(file); 
 					if (lex.getLexeme() == ";") {
 						reportLexerResults();
-						clearErrors();
+						lex.lexer(file);
 						return true;
 					}
 					else {
@@ -939,27 +824,24 @@ bool SyntaxAn::scan() {
 			return false; 
 		}
 	}
-	else {
-		reportErr("R21 violated: expected lexeme: get");
-	}
 	return false;
 }
 
 bool SyntaxAn::print() {
-	lex.lexer(file); 
 	if (lex.getLexeme() == "put") {
 		cout << "<Scan> -> put(<expression>);" << endl;
-		lex.lexer(file); 
+		reportLexerResults();
+		lex.lexer(file);
 		if (lex.getLexeme() == "(") {
 			reportLexerResults();
+			lex.lexer(file);
 			if (expression()) {
-				lex.lexer(file); 
+				reportLexerResults();
 				if (lex.getLexeme() == ")") {
-					reportLexerResults();
 					lex.lexer(file); 
 					if (lex.getLexeme() == ";") {
 						reportLexerResults();
-						clearErrors();
+						lex.lexer(file);
 						return true;
 					}
 					else {
@@ -982,23 +864,17 @@ bool SyntaxAn::print() {
 			return false; 
 		}
 	}
-	else {
-		reportErr("R20 violated: expected lexeme: put");
-		return false; 
-	}
 	return false;
 }
 
 bool SyntaxAn::compound() {
-	lex.lexer(file); 
 	if (lex.getLexeme() == "{") {
 		reportLexerResults();
+		lex.lexer(file);
 		cout << "<Compound> -> {  <Statement List>  } " << endl;
-		if (statement()) {
-			lex.lexer(file); 
+		if (StatementList()) {
 			if (lex.getLexeme() == "}") {
 				reportLexerResults();
-				clearErrors();
 				return true;
 			}
 			else {
@@ -1011,29 +887,24 @@ bool SyntaxAn::compound() {
 			return false; 
 		}
 	}
-	else {
-		reportErr("R16 violated: expected lexeme: {");
-		return false; 
-	}
-	return false;
+	return false; 
 }
 
 bool SyntaxAn::Return() { 
-	lex.lexer(file); 
 	if (lex.getLexeme() == "return") {
-
+		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == ";") {
 			reportLexerResults();
+			lex.lexer(file);
 			cout << "<Return> -> return;" << endl;
-			clearErrors();
 			return true;
 		}
 		else if (expression()) {
 			cout << "<Return> -> return<expression>;" << endl;
-			lex.lexer(file); 
 			if (lex.getLexeme() == ";") {
-				clearErrors();
+				reportLexerResults();
+				lex.lexer(file);
 				return true;
 			}
 		}
@@ -1043,14 +914,9 @@ bool SyntaxAn::Return() {
 		}
 		return false;
 	}
-	else {
-		reportErr("R19 violated: expected lexeme: \'return\'");
-		return false; 
-	}
+	return false;
 }
 
 bool SyntaxAn::empty() {
-	//WHAT DO WE DO HEREREREREREREEEEEEEEEEEEEE
-	clearErrors();
 	return true;
 }
