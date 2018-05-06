@@ -371,13 +371,40 @@ bool SyntaxAn::Relop() {
 bool SyntaxAn::Condition() {
 	cout << "<Condition> -> <Expression>  <Relop>   <Expression>" << endl;
 	if (expression()) {
+		string op = lex.getLexeme();
 		if (Relop()) {
-			if (expression())
+			if (expression()) 
+				if (op == "==") {
+					gen_instr("EQU", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				}
+				else if (op == "^=") {
+					gen_instr("NEQ", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				}
+				else if (op == ">") {
+					gen_instr("GRT", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				}
+				else if (op == "<") {
+					gen_instr("LES", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				}
+				else if (op == "=>") {
+					gen_instr("GEQ", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				}
+				else if (op == "=<") {
+					gen_instr("LEQ", "nil");
+					jumpStack.push(instr_address - 1);
+					gen_instr("JUMPZ", "nil");
+				} 
 				return true;
-			else {
-				reportErr("R23 violated");
-				return false;
-			}
 		}
 		else {
 			reportErr("R23 violated");
@@ -529,6 +556,8 @@ bool SyntaxAn::While() {
 	if (lex.getLexeme() == "while") {
 		cout << "<Statement> -> <While>" << endl;
 		cout << "<While> -> ( <Condition>  )  <Statement> " << endl;
+		string addr = to_string(instr_address);
+		gen_instr("LABEL", "nil");
 		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
@@ -538,6 +567,8 @@ bool SyntaxAn::While() {
 					reportLexerResults();
 					lex.lexer(file);
 					if (statement()) {
+						gen_instr("JUMP", addr);
+						back_patch(instr_address);
 						return true;
 					}
 					else {
@@ -989,4 +1020,11 @@ string SyntaxAn::get_address(string lexeme) {
 		}
 	}
 	return "NOT FOUND";
+}
+
+void SyntaxAn::back_patch(int jump_addr) {
+	string jumpAddr = to_string(jump_addr);
+	int addr = jumpStack.top();
+	jumpStack.pop();
+	instrTable[addr].oprnd = jumpAddr;
 }

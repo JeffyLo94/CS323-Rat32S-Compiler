@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 #include "LexAn.h"
+#include <stack>
 
 struct symbolTableEntry {
 	string identifierName;
@@ -76,6 +77,11 @@ public:
 
 	void PrintSymbolTable(); 
 	void PrintInstrTable();
+
+	int instr_address = 1;
+	void back_patch(int);
+
+	stack<int> jumpStack;
 private:
 	//Helper Methods:
 	void reportErr(string msg);
@@ -84,9 +90,8 @@ private:
 	void symbolTableInsert(symbolTableEntry entry); 
 	bool checkSymbolTable(string);
 	bool search(string key); 
-	int instr_address = 1;
 	string curQualifier = "";
-	int mem_location = 2001;
+	int mem_location = 2000;
 
 	void gen_instr(string, string);
 
