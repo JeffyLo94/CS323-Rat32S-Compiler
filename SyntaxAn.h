@@ -21,9 +21,15 @@
 #include "LexAn.h"
 
 struct symbolTableEntry {
-	string identiferName;
+	string identifierName;
 	int memoryLocation;
 	string identifierType;
+};
+
+struct instrTableEntry {
+	int address = 0;
+	string op = "";
+	string oprnd = "";
 };
 
 class SyntaxAn {
@@ -69,14 +75,29 @@ public:
 	bool Return();
 
 	void PrintSymbolTable(); 
+	void PrintInstrTable();
 private:
 	//Helper Methods:
 	void reportErr(string msg);
 	void reportLexerResults();
-	void symbolTableInsert(symbolTableEntry entry); 
-	bool search(string key); 
 
-	vector<symbolTableEntry> symbolTable; 
+	void symbolTableInsert(symbolTableEntry entry); 
+	bool checkSymbolTable(string);
+	bool search(string key); 
+	int instr_address = 1;
+	string curQualifier = "";
+	int mem_location = 2001;
+
+	void gen_instr(string, string);
+
+	symbolTableEntry newEntry;
+	vector<symbolTableEntry> symbolTable;
+
+	instrTableEntry newInstrEntry;
+	vector<instrTableEntry> instrTable;
+
+	bool symbolFound = false;
+	string get_address(string);
 
 	//Lexical Analyzer
 	LexAn lex;

@@ -13,12 +13,6 @@
 ***********************************************************/
 #include "SyntaxAn.h"
 
-/*
-Dev Note:
-- If a rule has | <empty>
-	- wouldn't it never thrown an error?
-*/
-
 SyntaxAn::SyntaxAn(string inputFile, string outputFile) {
 	//Prepping InputFile
 	file.open(inputFile);
@@ -49,26 +43,6 @@ void SyntaxAn::reportLexerResults() {
 	cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme() << endl;
 }
 
-void SyntaxAn::symbolTableInsert(symbolTableEntry entry) {
-	
-	if (search(entry.identiferName)) {
-		reportErr("identifier already predefined"); 
-		exit(1); 
-	}
-	else {
-		symbolTable.push_back(entry);
-	}
-}
-
-bool SyntaxAn::search(string key) {
-	int i; 
-	for (i = 0; i < symbolTable.size(); i++) {
-		if (symbolTable[i].identiferName == key)
-			return true; 
-	}
-
-	return false; 
-}
 
 //Jeffrey:
 //R1. <Rat18S>  :: = <Opt Function Definitions>   %%  <Opt Declaration List>  <Statement List>
@@ -257,15 +231,14 @@ bool  SyntaxAn::Parameter() {
 //R24. <Relop> :: = == | ^= | > | < | => | =<
 //R23. <Condition> :: = <Expression>  <Relop>   <Expression>
 bool SyntaxAn::Qualifier() {
-	cout << "<Qualifier> -> int | boolean | real" << endl;
-	symbolTableEntry newEntry; 
-	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean" || lex.getLexeme() == "real") {
+	cout << "<Qualifier> -> int | boolean" << endl;
+	if (curQualifier != lex.getLexeme()) {
+		curQualifier == lex.getLexeme();
+	}
+	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean") {
 		newEntry.identifierType = lex.getLexeme(); 
 		reportLexerResults();
 		lex.lexer(file);
-		newEntry.identiferName = lex.getLexeme(); 
-		newEntry.memoryLocation = 2000; 
-		symbolTableInsert(newEntry); 
 		return true;
 	}
 	return false;
@@ -344,6 +317,10 @@ bool SyntaxAn::Declaration() {
 bool SyntaxAn::IDs() {
 	cout << " <IDs> -> <Identifier> | <Identifier>, <IDs>" << endl;
 	if (lex.getToken() == "IDENTIFIER") {
+		newEntry.identifierName = lex.getLexeme();
+		newEntry.memoryLocation = mem_location;
+		mem_location++;
+		symbolTableInsert(newEntry);
 		reportLexerResults();
 		lex.lexer(file);
 		if(lex.getLexeme() == ",") {
@@ -458,6 +435,7 @@ bool SyntaxAn::statement() {
 
 bool SyntaxAn::assign() {
 	if (lex.getToken() == "IDENTIFIER") {
+		string save = lex.getLexeme();
 		cout << "<Assign> -> <Identifier> = <Expression>" << endl;
 		reportLexerResults();
 		lex.lexer(file); 
@@ -465,6 +443,7 @@ bool SyntaxAn::assign() {
 			reportLexerResults();
 			lex.lexer(file);
 			if (expression()) {
+				gen_instr("POPM", get_address(save));
 				if (lex.getLexeme() == ";") {
 					reportLexerResults();
 					lex.lexer(file);
@@ -508,6 +487,7 @@ bool SyntaxAn::expressionPrime() {
 		lex.lexer(file); 
 		cout << "<Expression Prime> -> + <Term> <Expression Prime>" << endl;
 		if (term()) {
+			gen_instr("ADD", "nil");
 			if (expressionPrime()) {
 				return true;
 			}
@@ -659,7 +639,6 @@ bool SyntaxAn::term() {
 			return true;
 		}
 		else {
-			reportErr("R27 violated: expected <termPrime>"); 
 			return false; 
 		}
 	}
@@ -667,6 +646,50 @@ bool SyntaxAn::term() {
 		reportErr("R27 violated: expected <Term>"); 
 		return false; 
 	}
+}
+
+bool SyntaxAn::termPrime() {
+	if (lex.getLexeme() == "*") {
+		reportLexerResults();
+		lex.lexer(file);
+		cout << "<Term Prime> -> * <Term> <Term Prime>" << endl;
+		if (factor()) {
+			gen_instr("MUL", "nil");
+			if (termPrime()) {
+				return true;
+			}
+			else {
+				reportErr("R28 violated: expected <Expression Prime>");
+				return false;
+			}
+		}
+		else {
+			reportErr("R28 violated: expected <term>");
+			return false;
+		}
+	}
+	else if (lex.getLexeme() == "/") {
+		reportLexerResults();
+		lex.lexer(file);
+		cout << "<Term Prime> -> / <Term> <Term Prime>" << endl;
+		if (term()) {
+			if (expressionPrime()) {
+				return true;
+			}
+			else {
+				reportErr("R28 violated: expected <Expression Prime>");
+				return false;
+			}
+		}
+		else {
+			reportErr("R28 violated: expected <term>");
+			return false;
+		}
+	}
+	else if (empty()) {
+		return true;
+	}
+	return false;
 }
 
 bool SyntaxAn::primary() {
@@ -682,6 +705,7 @@ bool SyntaxAn::primary() {
 		}
 	}
 	if (lex.getToken() == "IDENTIFIER") {
+		gen_instr("PUSHM", get_address(lex.getLexeme()));
 		reportLexerResults();
 		char ch = file.peek();
 		if (ch== '(') {
@@ -733,11 +757,6 @@ bool SyntaxAn::primary() {
 			return false; 
 		}
 	}
-	else if (lex.getToken() == "REAL") {
-		reportLexerResults();
-		cout << "<Primary> -> <Real>" << endl;
-		return true;
-	}
 	else if (lex.getLexeme() == "true") {
 		reportLexerResults();
 		cout << "<Primary> -> true" << endl;
@@ -770,49 +789,6 @@ bool SyntaxAn::factor() {
 	else {
 		reportErr("R29 violated"); 
 		return false; 
-	}
-	return false;
-}
-
-bool SyntaxAn::termPrime() {
-	if (lex.getLexeme() == "*") {
-		reportLexerResults();
-		lex.lexer(file);
-		cout << "<Term Prime> -> * <Term> <Term Prime>" << endl;
-		if (term()) {
-			if (expressionPrime()) {
-				return true;
-			}
-			else {
-				reportErr("R28 violated: expected <Expression Prime>");
-				return false; 
-			}
-		}
-		else {
-			reportErr("R28 violated: expected <term>");
-			return false; 
-		}
-	}
-	else if (lex.getLexeme() == "/") {
-		reportLexerResults();
-		lex.lexer(file); 
-		cout << "<Term Prime> -> / <Term> <Term Prime>" << endl;
-		if (term()) {
-			if (expressionPrime()) {
-				return true;
-			}
-			else {
-				reportErr("R28 violated: expected <Expression Prime>");
-				return false; 
-			}
-		}
-		else {
-			reportErr("R28 violated: expected <term>");
-			return false; 
-		}
-	}
-	else if (empty()) {
-		return true;
 	}
 	return false;
 }
@@ -947,16 +923,70 @@ bool SyntaxAn::Return() {
 	return false;
 }
 
-void SyntaxAn::PrintSymbolTable() {
-	
-	for (int i = 0; i < symbolTable.size(); i++) {
-		cout << symbolTable[i].identiferName << endl; 
-		cout << symbolTable[i].identifierType << endl; 
-		cout << symbolTable[i].memoryLocation << endl; 
-	}
-	cout << endl; 
-}
 
 bool SyntaxAn::empty() {
 	return true;
+}
+
+void SyntaxAn::PrintSymbolTable() {
+	cout << "\nIdentifier Name\t\tIdentifier Type\t\tMemory Location" << endl;
+	for (int i = 0; i < symbolTable.size(); i++) {
+		cout << symbolTable[i].identifierName << "\t\t\t" << 
+			symbolTable[i].identifierType << "\t\t\t" <<
+			symbolTable[i].memoryLocation << endl; 
+	}
+	cout << endl;
+}
+
+void SyntaxAn::symbolTableInsert(symbolTableEntry entry) {
+	if (checkSymbolTable(entry.identifierName)) {
+		symbolTable.push_back(entry);
+	}
+}
+
+bool SyntaxAn::checkSymbolTable(string identifierName) {
+	if (search(identifierName)) {
+		reportErr("\n*******************************\nERROR: Variable already declared\n*******************************\n");
+		return false;
+	}
+	return true;
+}
+
+bool SyntaxAn::search(string key) {
+	int i;
+	for (i = 0; i < symbolTable.size(); i++) {
+		if (symbolTable[i].identifierName == key)
+			return true;
+	}
+	return false;
+}
+
+void SyntaxAn::gen_instr(string op, string oprnd) {
+	newInstrEntry.address = instr_address;
+	newInstrEntry.op = op;
+	newInstrEntry.oprnd = oprnd;
+	instrTable.push_back(newInstrEntry);
+	instr_address++;
+}
+
+void SyntaxAn::PrintInstrTable() {
+	cout << "\nAddress\t\tOp\t\tOprnd" << endl;
+	for (int i = 0; i < instrTable.size(); i++) {
+		cout << instrTable[i].address << "\t\t" <<
+				instrTable[i].op << "\t\t" <<
+				instrTable[i].oprnd << endl;
+		}
+	cout << endl;
+}
+
+string SyntaxAn::get_address(string lexeme) {
+	string mem_address = "";
+
+	for (int i = 0; i < symbolTable.size(); i++) {
+		if (symbolTable[i].identifierName == lexeme) {
+			mem_address = to_string(symbolTable[i].memoryLocation);
+			return mem_address;
+		}
+	}
+	return "NOT FOUND";
 }

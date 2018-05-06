@@ -85,7 +85,10 @@ int main() {
 		SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
 		SyntaxChecker.Rat18S();
 		//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
+		cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~Symbol Table~~~~~~~~~~~~~~~~~~~~~~~~~~";
 		SyntaxChecker.PrintSymbolTable(); 
+		cout << "\n\n~~~~~~~~~~Instruction Table~~~~~~~~~~";
+		SyntaxChecker.PrintInstrTable();
 	}
 
 	//Closing output filestream
