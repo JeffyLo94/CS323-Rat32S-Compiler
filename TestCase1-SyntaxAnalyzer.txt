@@ -1,3 +1,9 @@
-%%
-	int i, max;
-	while ( i < max)   i = i + max;      
+   %% 
+    int i, max, sum;
+
+    sum = 0;
+    i = 1;
+    while (i <  max)  {
+          sum = sum + i;
+          i  = i + 1; 
+     }

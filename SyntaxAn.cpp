@@ -765,6 +765,7 @@ bool SyntaxAn::primary() {
 		}
 	}
 	else if (lex.getToken() == "INTEGER") {
+		gen_instr("PUSHI", lex.getLexeme());
 		reportLexerResults();
 		cout << "<Primary> -> <Integer>" << endl;
 		return true;
@@ -1004,8 +1005,11 @@ void SyntaxAn::PrintInstrTable() {
 	cout << "\nAddress\t\tOp\t\tOprnd" << endl;
 	for (int i = 0; i < instrTable.size(); i++) {
 		cout << instrTable[i].address << "\t\t" <<
-				instrTable[i].op << "\t\t" <<
-				instrTable[i].oprnd << endl;
+			instrTable[i].op << "\t\t";
+			if (instrTable[i].oprnd != "nil") {
+				cout << instrTable[i].oprnd;
+			}
+			cout << endl;
 		}
 	cout << endl;
 }
