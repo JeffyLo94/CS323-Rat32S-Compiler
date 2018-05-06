@@ -17,7 +17,14 @@
 #define SyntaxAn_H
 
 #include <string>
+#include <vector>
 #include "LexAn.h"
+
+struct symbolTableEntry {
+	string identiferName;
+	int memoryLocation;
+	string identifierType;
+};
 
 class SyntaxAn {
 public:
@@ -61,11 +68,15 @@ public:
 	bool compound();
 	bool Return();
 
-
+	void PrintSymbolTable(); 
 private:
 	//Helper Methods:
 	void reportErr(string msg);
 	void reportLexerResults();
+	void symbolTableInsert(symbolTableEntry entry); 
+	bool search(string key); 
+
+	vector<symbolTableEntry> symbolTable; 
 
 	//Lexical Analyzer
 	LexAn lex;

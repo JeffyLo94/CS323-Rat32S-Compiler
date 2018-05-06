@@ -49,6 +49,27 @@ void SyntaxAn::reportLexerResults() {
 	cout << "Token: " << lex.getToken() << setw(10) << "Lexeme: " << lex.getLexeme() << endl;
 }
 
+void SyntaxAn::symbolTableInsert(symbolTableEntry entry) {
+	
+	if (search(entry.identiferName)) {
+		reportErr("identifier already predefined"); 
+		exit(1); 
+	}
+	else {
+		symbolTable.push_back(entry);
+	}
+}
+
+bool SyntaxAn::search(string key) {
+	int i; 
+	for (i = 0; i < symbolTable.size(); i++) {
+		if (symbolTable[i].identiferName == key)
+			return true; 
+	}
+
+	return false; 
+}
+
 //Jeffrey:
 //R1. <Rat18S>  :: = <Opt Function Definitions>   %%  <Opt Declaration List>  <Statement List>
 bool SyntaxAn::Rat18S() {
@@ -237,9 +258,14 @@ bool  SyntaxAn::Parameter() {
 //R23. <Condition> :: = <Expression>  <Relop>   <Expression>
 bool SyntaxAn::Qualifier() {
 	cout << "<Qualifier> -> int | boolean | real" << endl;
+	symbolTableEntry newEntry; 
 	if (lex.getLexeme() == "int" || lex.getLexeme() == "boolean" || lex.getLexeme() == "real") {
+		newEntry.identifierType = lex.getLexeme(); 
 		reportLexerResults();
 		lex.lexer(file);
+		newEntry.identiferName = lex.getLexeme(); 
+		newEntry.memoryLocation = 2000; 
+		symbolTableInsert(newEntry); 
 		return true;
 	}
 	return false;
@@ -285,7 +311,7 @@ bool SyntaxAn::OptDeclarationList() {
 }
 
 bool SyntaxAn::DeclarationList() {
-	cout << " <Declaration List> -> <Declaration>; | <Declaration>; <Declaration List>" << endl;
+	cout << lex.getLexeme() << endl;
 	if (Declaration()) {
 		if (lex.getLexeme() == ";") {
 			reportLexerResults();
@@ -919,6 +945,16 @@ bool SyntaxAn::Return() {
 		return false;
 	}
 	return false;
+}
+
+void SyntaxAn::PrintSymbolTable() {
+	
+	for (int i = 0; i < symbolTable.size(); i++) {
+		cout << symbolTable[i].identiferName << endl; 
+		cout << symbolTable[i].identifierType << endl; 
+		cout << symbolTable[i].memoryLocation << endl; 
+	}
+	cout << endl; 
 }
 
 bool SyntaxAn::empty() {

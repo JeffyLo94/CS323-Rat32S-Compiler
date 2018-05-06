@@ -51,8 +51,9 @@ int main() {
 	outfile << "*	Assignment #2 - Syntax Analyzer" << endl;
 	outfile << "--------------------------------------------------------" << endl << endl;
 
-	cout << "Please enter source file .txt (type EXIT to quit): ";
-	cin >> fileName;
+	//cout << "Please enter source file .txt (type EXIT to quit): ";
+	//cin >> fileName;
+	fileName = "TestCase1-SyntaxAnalyzer.txt"; 
 	cout << " " << fileName << endl << endl;
 
 	if (fileName != "EXIT") {
@@ -84,9 +85,8 @@ int main() {
 		SyntaxAn SyntaxChecker(fileName, "SyntaxReport.txt");
 		SyntaxChecker.Rat18S();
 		//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
-
+		SyntaxChecker.PrintSymbolTable(); 
 	}
-
 
 	//Closing output filestream
 	if (outfile.is_open()) {
