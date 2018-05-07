@@ -1,19 +1,16 @@
-%%
+   %% 
+    int   i, max, sum;
 
-int a, b, c; 
-
-get(a); 
-get(b); 
-c = 0; 
-
-while(c < a + b) {
-	c = a + b; 
-}
-
-if(c / b == 0){
-	put(c); 
-}
-else{
-	put(b); 
-}
-endif
+    sum = 0;
+    i = 1;
+    get ( max);
+    while (i <  max)  {
+          sum = sum + i;
+          i  = i + 1; 
+     }
+	 
+	 if(sum / max == 0)
+	 {
+		put (sum + max);
+	 }
+	 endif
