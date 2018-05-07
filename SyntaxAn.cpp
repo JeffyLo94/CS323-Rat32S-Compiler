@@ -704,6 +704,7 @@ bool SyntaxAn::termPrime() {
 		lex.lexer(file);
 		cout << "<Term Prime> -> / <Term> <Term Prime>" << endl;
 		if (term()) {
+			gen_instr("DIV", "nil"); 
 			if (expressionPrime()) {
 				return true;
 			}
