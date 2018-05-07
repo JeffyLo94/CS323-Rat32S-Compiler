@@ -1,5 +1,5 @@
    %% 
-    int i, max, sum;
+    int max, sum;
 
     sum = 0;
     i = 1;

@@ -1,0 +1,19 @@
+%%
+
+int a, b, c; 
+
+get(a); 
+get(b); 
+c = 0; 
+
+while(c < a + b) {
+	c = a + b; 
+}
+
+if(c / b == 0){
+	put(c); 
+}
+else{
+	put(b); 
+}
+endif

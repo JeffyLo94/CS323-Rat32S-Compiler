@@ -1,0 +1,30 @@
+%%
+     int    x,  y;      ! declarations !
+
+     get (x, t);
+     while (x  <  y )  
+         {  put (x);
+         	put (y);
+            x = x + 1;
+         } 
+
+	int b, c, d, k; 
+	while(a =< b) {
+		get(b);
+		get(c);
+		get(d);
+		get(k); 
+
+		if (b ^= k) put (b);
+		else {
+			c = b;
+			if(b == d) {
+				put(b); 
+				put(c); 
+				put(d); 
+				put(k); 
+			}
+			endif
+		}
+		endif
+	}
