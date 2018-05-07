@@ -533,6 +533,7 @@ bool SyntaxAn::expressionPrime() {
 		lex.lexer(file); 
 		cout << "<Expression Prime> -> - <Term> <Expression Prime>" << endl;
 		if (term()) {
+			gen_instr("SUB", "nil"); 
 			if (expressionPrime()) {
 				return true;
 			}

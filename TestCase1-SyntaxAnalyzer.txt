@@ -4,6 +4,6 @@
     sum = 0;
     i = 1;
     while (i <  max)  {
-          sum = sum + i;
+          sum = sum - i;
           i  = i / 1; 
      }
