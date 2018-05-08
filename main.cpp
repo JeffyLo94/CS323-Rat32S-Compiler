@@ -53,7 +53,7 @@ int main() {
 
 	//cout << "Please enter source file .txt (type EXIT to quit): ";
 	//cin >> fileName;
-	fileName = "TestCase1-SyntaxAnalyzer.txt"; 
+	fileName = "TestCase3-ICG.txt"; 
 	cout << " " << fileName << endl << endl;
 
 	if (fileName != "EXIT") {

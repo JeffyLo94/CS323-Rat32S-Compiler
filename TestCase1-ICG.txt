@@ -7,3 +7,4 @@
           sum = sum + i;
           i  = i + 1; 
      }
+	 put(max); 

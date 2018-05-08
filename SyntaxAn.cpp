@@ -610,11 +610,12 @@ bool SyntaxAn::If() {
 					reportLexerResults();
 					lex.lexer(file);
 					if (statement()) {
-						lex.lexer(file);
+						//lex.lexer(file);
 						if (lex.getLexeme() == "else") {
 							reportLexerResults();
 							lex.lexer(file);
 							if (statement()) {
+								
 								lex.lexer(file);
 								back_patch(instr_address);
 							}
@@ -857,7 +858,7 @@ bool SyntaxAn::scan() {
 		if (lex.getLexeme() == "(") {
 			reportLexerResults();
 			lex.lexer(file);
-			if (IDs()) {
+			if (expression()) {
 				if (lex.getLexeme() == ")") {
 					reportLexerResults();
 					lex.lexer(file); 
@@ -938,6 +939,7 @@ bool SyntaxAn::compound() {
 		cout << "<Compound> -> {  <Statement List>  } " << endl;
 		if (StatementList()) {
 			if (lex.getLexeme() == "}") {
+				lex.lexer(file); 
 				reportLexerResults();
 				return true;
 			}

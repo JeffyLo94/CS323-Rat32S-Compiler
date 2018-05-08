@@ -1,14 +1,7 @@
 %%
-     int    x,  y;      ! declarations !
 
-     get (x, t);
-     while (x  <  y )  
-         {  put (x);
-         	put (y);
-            x = x + 1;
-         } 
 
-	int b, c, d, k; 
+	int a, b, c, d, k; 
 	while(a =< b) {
 		get(b);
 		get(c);
@@ -27,4 +20,3 @@
 			endif
 		}
 		endif
-	}
