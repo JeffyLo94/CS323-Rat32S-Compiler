@@ -51,9 +51,9 @@ int main() {
 	outfile << "*	Assignment #2 - Syntax Analyzer" << endl;
 	outfile << "--------------------------------------------------------" << endl << endl;
 
-	//cout << "Please enter source file .txt (type EXIT to quit): ";
-	//cin >> fileName;
-	fileName = "TestCase3-ICG.txt"; 
+	cout << "Please enter source file .txt (type EXIT to quit): ";
+	cin >> fileName;
+	//fileName = "TestCase3-ICG.txt"; 
 	cout << " " << fileName << endl << endl;
 
 	if (fileName != "EXIT") {
