@@ -599,6 +599,7 @@ bool SyntaxAn::If() {
 	if (lex.getLexeme() == "if") {
 		cout << "<Statement> -> <If>" << endl;
 		cout << "<If> -> if  ( <Condition>  ) <Statement>   endif |\n if  ( <Condition>  ) <Statement>   else  <Statement>  endif" << endl;
+		string addr = to_string(instr_address);
 		reportLexerResults();
 		lex.lexer(file); 
 		if (lex.getLexeme() == "(") {
@@ -609,8 +610,29 @@ bool SyntaxAn::If() {
 					reportLexerResults();
 					lex.lexer(file);
 					if (statement()) {
-						lex.lexer(file); 
+						lex.lexer(file);
+						if (lex.getLexeme() == "else") {
+							reportLexerResults();
+							lex.lexer(file);
+							if (statement()) {
+								lex.lexer(file);
+								back_patch(instr_address);
+							}
+							else {
+								reportErr("R18 violated: expected <statement>");
+								return false;
+							}
+						}
 						if (lex.getLexeme() == "endif") {
+							reportLexerResults();
+							lex.lexer(file);
+							return true;
+						}
+						else {
+							reportErr("R18 violated: expected lexeme: else | endif");
+							return false;
+						}
+						/*if (lex.getLexeme() == "endif") {
 							reportLexerResults();
 							lex.lexer(file);
 							return true;
@@ -638,7 +660,7 @@ bool SyntaxAn::If() {
 						else {
 							reportErr("R18 violated: expected lexeme: else | endif");
 							return false;
-						}
+						}*/
 					}
 					else {
 						reportErr("R18 violated: expected <statement>");
@@ -842,6 +864,7 @@ bool SyntaxAn::scan() {
 					if (lex.getLexeme() == ";") {
 						reportLexerResults();
 						lex.lexer(file);
+						gen_instr("STDIN", "");
 						return true;
 					}
 					else {
@@ -882,6 +905,7 @@ bool SyntaxAn::print() {
 					if (lex.getLexeme() == ";") {
 						reportLexerResults();
 						lex.lexer(file);
+						gen_instr("STDOUT", "");
 						return true;
 					}
 					else {
