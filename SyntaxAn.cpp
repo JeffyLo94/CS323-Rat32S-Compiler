@@ -611,13 +611,12 @@ bool SyntaxAn::If() {
 					lex.lexer(file);
 					if (statement()) {
 						//lex.lexer(file);
+						back_patch(instr_address);
 						if (lex.getLexeme() == "else") {
 							reportLexerResults();
 							lex.lexer(file);
 							if (statement()) {
-								
 								lex.lexer(file);
-								back_patch(instr_address);
 							}
 							else {
 								reportErr("R18 violated: expected <statement>");
@@ -990,12 +989,18 @@ bool SyntaxAn::empty() {
 
 void SyntaxAn::PrintSymbolTable() {
 	cout << "\nIdentifier Name\t\tIdentifier Type\t\tMemory Location" << endl;
+	outFile << "\nIdentifier Name\t\tIdentifier Type\t\tMemory Location" << endl;
+
 	for (int i = 0; i < symbolTable.size(); i++) {
 		cout << symbolTable[i].identifierName << "\t\t\t" << 
 			symbolTable[i].identifierType << "\t\t\t" <<
 			symbolTable[i].memoryLocation << endl; 
+		outFile << symbolTable[i].identifierName << "\t\t\t" <<
+			symbolTable[i].identifierType << "\t\t\t" <<
+			symbolTable[i].memoryLocation << endl;
 	}
 	cout << endl;
+	outFile << endl;
 }
 
 void SyntaxAn::symbolTableInsert(symbolTableEntry entry) {
@@ -1031,15 +1036,22 @@ void SyntaxAn::gen_instr(string op, string oprnd) {
 
 void SyntaxAn::PrintInstrTable() {
 	cout << "\nAddress\t\tOp\t\tOprnd" << endl;
+	outFile << "\nAddress\t\tOp\t\tOprnd" << endl;
+
 	for (int i = 0; i < instrTable.size(); i++) {
 		cout << instrTable[i].address << "\t\t" <<
 			instrTable[i].op << "\t\t";
+		outFile << instrTable[i].address << "\t\t" <<
+			instrTable[i].op << "\t\t";
 			if (instrTable[i].oprnd != "nil") {
 				cout << instrTable[i].oprnd;
+				outFile << instrTable[i].oprnd;
 			}
 			cout << endl;
+			outFile << endl;
 		}
 	cout << endl;
+	outFile << endl;
 }
 
 string SyntaxAn::get_address(string lexeme) {

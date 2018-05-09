@@ -7,10 +7,10 @@
     while (i <  max)  {
           sum = sum + i;
           i  = i + 1; 
-     }
+	}
 	 
-	 if(sum / max == 0)
-	 {
+	if(sum / max == 0)
+	{
 		put (sum + max);
-	 }
-	 endif
+	}
+	endif

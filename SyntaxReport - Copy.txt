@@ -1,0 +1,195 @@
+--------------------------------------------------------
+Compiler Project
+*California State University, Fullerton(CSUF)
+*	CPSC 323 - Spring 2017
+* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia
+* Prof Song Choi
+*	Assignment #2 - Syntax Analyzer
+--------------------------------------------------------
+
+Source File Text:
+
+   %% 
+    int i, max, sum;
+
+    sum = 0;
+    i = 1;
+    while (i <  max)  {
+          sum = sum + i;
+          i  = i + 1; 
+     }
+	 put(max); 
+
+Identifier Name		Identifier Type		Memory Location
+i			int			2000
+max			int			2001
+sum			int			2002
+
+
+Address		Op		Oprnd
+1		PUSHI		0
+2		POPM		2002
+3		PUSHI		1
+4		POPM		2000
+5		LABEL		
+6		PUSHM		2000
+7		PUSHM		2001
+8		LES		
+9		JUMPZ		19
+10		PUSHM		2002
+11		PUSHM		2000
+12		ADD		
+13		POPM		2002
+14		PUSHM		2000
+15		PUSHI		1
+16		ADD		
+17		POPM		2000
+18		JUMP		5
+19		PUSHM		2001
+20		STDOUT		
+
+--------------------------------------------------------
+Compiler Project
+*California State University, Fullerton(CSUF)
+*	CPSC 323 - Spring 2017
+* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia
+* Prof Song Choi
+*	Assignment #2 - Syntax Analyzer
+--------------------------------------------------------
+
+Source File Text:
+
+   %% 
+    int   i, max, sum;
+
+    sum = 0;
+    i = 1;
+    get ( max);
+    while (i <  max)  {
+          sum = sum + i;
+          i  = i + 1; 
+	}
+	 
+	if(sum / max == 0)
+	{
+		put (sum + max);
+	}
+	endif
+
+Identifier Name		Identifier Type		Memory Location
+i			int			2000
+max			int			2001
+sum			int			2002
+
+
+Address		Op		Oprnd
+1		PUSHI		0
+2		POPM		2002
+3		PUSHI		1
+4		POPM		2000
+5		PUSHM		2001
+6		STDIN		
+7		LABEL		
+8		PUSHM		2000
+9		PUSHM		2001
+10		LES		
+11		JUMPZ		21
+12		PUSHM		2002
+13		PUSHM		2000
+14		ADD		
+15		POPM		2002
+16		PUSHM		2000
+17		PUSHI		1
+18		ADD		
+19		POPM		2000
+20		JUMP		7
+21		PUSHM		2002
+22		PUSHM		2001
+23		DIV		
+24		PUSHI		0
+25		EQU		
+26		JUMPZ		31
+27		PUSHM		2002
+28		PUSHM		2001
+29		ADD		
+30		STDOUT		
+
+--------------------------------------------------------
+Compiler Project
+*California State University, Fullerton(CSUF)
+*	CPSC 323 - Spring 2017
+* Authors: Jeffrey Lo, Andrew Nguyen, Arman Jafarinia
+* Prof Song Choi
+*	Assignment #2 - Syntax Analyzer
+--------------------------------------------------------
+
+Source File Text:
+
+%%
+
+
+	int a, b, c, d, k; 
+	while(a =< b) {
+		get(b);
+		get(c);
+		get(d);
+		get(k); 
+
+		if (b ^= k) put (b);
+		else {
+			c = b;
+			if(b == d) {
+				put(b); 
+				put(c); 
+				put(d); 
+				put(k); 
+			}
+			endif
+		}
+		endif
+	}
+
+Identifier Name		Identifier Type		Memory Location
+a			int			2000
+b			int			2001
+c			int			2002
+d			int			2003
+k			int			2004
+
+
+Address		Op		Oprnd
+1		LABEL		
+2		PUSHM		2000
+3		PUSHM		2001
+4		LEQ		
+5		JUMPZ		35
+6		PUSHM		2001
+7		STDIN		
+8		PUSHM		2002
+9		STDIN		
+10		PUSHM		2003
+11		STDIN		
+12		PUSHM		2004
+13		STDIN		
+14		PUSHM		2001
+15		PUSHM		2004
+16		NEQ		
+17		JUMPZ		20
+18		PUSHM		2001
+19		STDOUT		
+20		PUSHM		2001
+21		POPM		2002
+22		PUSHM		2001
+23		PUSHM		2003
+24		EQU		
+25		JUMPZ		34
+26		PUSHM		2001
+27		STDOUT		
+28		PUSHM		2002
+29		STDOUT		
+30		PUSHM		2003
+31		STDOUT		
+32		PUSHM		2004
+33		STDOUT		
+34		JUMP		1
+

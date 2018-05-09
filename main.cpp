@@ -86,8 +86,10 @@ int main() {
 		SyntaxChecker.Rat18S();
 		//SyntaxChecker.~SyntaxAn(); //Make sure files are closed
 		cout << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~Symbol Table~~~~~~~~~~~~~~~~~~~~~~~~~~";
+		outfile << "\n\n~~~~~~~~~~~~~~~~~~~~~~~~~~Symbol Table~~~~~~~~~~~~~~~~~~~~~~~~~~";
 		SyntaxChecker.PrintSymbolTable(); 
 		cout << "\n\n~~~~~~~~~~Instruction Table~~~~~~~~~~";
+		outfile << "\n\n~~~~~~~~~~Instruction Table~~~~~~~~~~";
 		SyntaxChecker.PrintInstrTable();
 	}
 

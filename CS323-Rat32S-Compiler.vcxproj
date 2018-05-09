@@ -115,6 +115,7 @@
     <Text Include="lexicalReport.txt" />
     <Text Include="OverallStructure.txt" />
     <Text Include="Source.txt" />
+    <Text Include="SyntaxReport.txt" />
     <Text Include="TestCase1-SyntaxAnalyzer.txt" />
     <Text Include="TestCase1.txt" />
     <Text Include="TestCase2-ICG.txt" />
